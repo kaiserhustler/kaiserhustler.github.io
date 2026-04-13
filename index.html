@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -37,7 +38,7 @@
       text-align: center;
       padding: 60px 20px;
       background: linear-gradient(rgba(255,255,255,0.35), rgba(255,255,255,0.35)),
-        url('images/tarotcardsherobanner.webp') center/cover;
+        url('https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?q=80&w=1600&auto=format&fit=crop') center/cover;
     }
     .hero-content {
       max-width: 700px;
@@ -71,19 +72,43 @@
       padding: 60px 40px;
       text-align: center;
     }
-    .wa-btn {
+    .whatsapp-float {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background: #25D366;
-      color: white;
-      padding: 14px 18px;
-      border-radius: 999px;
-      text-decoration: none;
-      animation: pulse 1.5s infinite;
+      z-index: 999999;
+      width: 78px;
+      height: 78px;
+      background-color: #25D366;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      animation: float-bounce 2s infinite;
+      transition: background-color 0.3s ease;
     }
-    @keyframes pulse {
-      0% { transform: scale(1); }
+    .whatsapp-float:hover { background-color: #1ebe5d; }
+    .whatsapp-float svg { width: 39px; height: 39px; fill: white; }
+    .whatsapp-tooltip {
+      position: absolute;
+      right: 90px;
+      background-color: #444;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 15px;
+      opacity: 0;
+      white-space: nowrap;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .whatsapp-float:hover .whatsapp-tooltip { opacity: 1; }
+    @keyframes float-bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
       50% { transform: scale(1.08); }
       100% { transform: scale(1); }
     }
@@ -107,10 +132,6 @@
     </div>
   </section>
 
-  <section class="about" style="padding: 50px 40px; text-align: center; max-width: 900px; margin: 0 auto;">
-    <p>Lecturas espirituales, guía energética y acompañamiento intuitivo para ayudarte a avanzar.</p>
-  </section>
-
   <section class="reviews" style="padding:60px 40px; background:white; text-align:center;">
     <h2>Lo que dicen mis consultantes</h2>
     <script defer async src='https://cdn.trustindex.io/loader.js?c7525e4693ee446aa4465335b90'></script>
@@ -121,8 +142,12 @@
     <p>Claudia lleva más de 10 años acompañando procesos personales con intuición, experiencia y sensibilidad.</p>
   </section>
 
-  <a class="wa-btn" href="https://wa.me/5210000000000" target="_blank">WhatsApp</a>
+  <a href="https://wa.me/5216634571494" class="whatsapp-float" target="_blank" rel="noopener">
+    <div class="whatsapp-tooltip">¿Puedo ayudarte?</div>
+    <svg viewBox="0 0 32 32">
+      <path d="M16.003 2.002C8.823 2.002 2.918 7.91 2.918 15.09c0 2.662.73 5.253 2.114 7.51L2 30l7.56-2.003a13.075 13.075 0 006.443 1.647c7.18 0 13.087-5.907 13.087-13.088S23.184 2.002 16.003 2.002zm0 23.72c-2.144 0-4.243-.578-6.07-1.674l-.435-.258-4.487 1.19 1.197-4.373-.283-.45a11.055 11.055 0 01-1.685-5.896c0-6.1 4.965-11.065 11.064-11.065s11.065 4.965 11.065 11.065-4.965 11.066-11.065 11.066z"/>
+    </svg>
+  </a>
 </body>
 </html>
-
 
