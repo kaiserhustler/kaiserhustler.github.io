@@ -9,6 +9,29 @@
 
   <link rel="icon" type="image/webp" href="images/cards.webp" />
 
+  <!-- SCHEMA (SEO REAL) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Portal Místico - Tarotista Claudia",
+    "image": "https://portalmistico.co/images/tarotistaclaudiaenguadalajara.webp",
+    "url": "https://portalmistico.co",
+    "telephone": "+52 1 663 457 1494",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Av. Alcalde 159",
+      "addressLocality": "Guadalajara",
+      "addressRegion": "Jalisco",
+      "postalCode": "44100",
+      "addressCountry": "MX"
+    },
+    "areaServed": "Guadalajara",
+    "description": "Lecturas de tarot en Guadalajara con enfoque claro y sin juicios. Respuestas sobre amor, relaciones y decisiones personales.",
+    "priceRange": "$$"
+  }
+  </script>
+
   <style>
     *{box-sizing:border-box;}
     body{margin:0;font-family:Arial,sans-serif;color:#222;background:#fff;}
@@ -40,15 +63,28 @@
     .hero h1{font-size:14px;font-weight:500;margin-bottom:10px;letter-spacing:.2px;}
     .hero h2{font-size:48px;line-height:1.15;margin:0 0 16px;}
 
+    /* 🔴 BOTONES MEJORADOS */
     .btn{
       display:inline-block;
       margin-top:20px;
       padding:14px 28px;
-      background:#111;
+      background:#e10600;
       color:#fff;
       text-decoration:none;
       border-radius:999px;
       box-shadow:0 6px 18px rgba(0,0,0,.18);
+      transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+      will-change:transform;
+    }
+
+    .btn:hover{
+      transform:scale(1.06);
+      background:#ff1a12;
+      box-shadow:0 10px 25px rgba(225,6,0,.35);
+    }
+
+    .btn:active{
+      transform:scale(0.97);
     }
 
     main{display:block;}
@@ -189,19 +225,18 @@
   </div>
 </section>
 
-<!-- TRUST INDEX RESTAURADO -->
 <section id="trust" class="section">
   <script defer async src="https://cdn.trustindex.io/loader.js?c7525e4693ee446aa4465335b90"></script>
 </section>
 
 <section id="about" class="section">
   <div class="about-grid">
-    <img loading="lazy" src="images/tarotistaclaudiaenguadalajara.webp" alt="Tarotista en Guadalajara Claudia">
+    <img loading="lazy" src="images/tarotistaclaudiaenguadalajara.webp">
     <div>
       <h2>Sobre Claudia</h2>
       <p><strong>Tarotista Claudia especialista en lectura del tarot</strong></p>
-      <p>Soy Claudia, tarotista intuitiva ubicada en Guadalajara Jalisco con más de 7 años de experiencia guiando a mujeres que buscan respuestas en el amor, en sus emociones y en su camino personal. Creo profundamente que el tarot no adivina: revela. Es una herramienta para mirar hacia adentro, soltar lo que duele y tomar decisiones desde la claridad.</p>
-      <p>Mi enfoque es directo, empático y sin juicios. Cada lectura es una conversación sagrada entre tu energía y la guía que el universo tiene para ti. No estás sola: si estás aquí, es porque tu alma busca entender, cerrar ciclos y recuperar su poder.</p>
+      <p>Soy Claudia, tarotista intuitiva ubicada en Guadalajara Jalisco con más de 7 años de experiencia...</p>
+      <p>Mi enfoque es directo, empático y sin juicios...</p>
     </div>
   </div>
 </section>
@@ -212,17 +247,17 @@
 
   <div class="tarot-list-grid">
     <ul>
-      <li>Lectura amorosa: ¿Te ama? ¿Volverá? ¿Hay alguien más?</li>
-      <li>¿Cortar o seguir? Consulta para decisiones difíciles.</li>
-      <li>Energía de tu pareja: lo que siente, lo que esconde.</li>
-      <li>Cierre de ciclos: sana lo que no te deja avanzar.</li>
+      <li>Lectura amorosa...</li>
+      <li>¿Cortar o seguir?...</li>
+      <li>Energía de tu pareja...</li>
+      <li>Cierre de ciclos...</li>
     </ul>
 
     <ul>
-      <li>Compatibilidad energética con otra persona.</li>
-      <li>Canalización intuitiva con respuestas directas.</li>
-      <li>Lectura mensual: qué viene en amor, trabajo y emociones.</li>
-      <li>Secretos revelados: lo que nadie te ha contado en tu relación.</li>
+      <li>Compatibilidad energética...</li>
+      <li>Canalización intuitiva...</li>
+      <li>Lectura mensual...</li>
+      <li>Secretos revelados...</li>
     </ul>
   </div>
 </section>
@@ -241,9 +276,8 @@
   <h2>Primera Pregunta Gratis: Empieza con Claridad</h2>
 
   <p>Haz una pregunta. Recibe una respuesta. Sin compromiso.</p>
-  <p>Claudia te ofrece una tirada gratuita para responder una pregunta puntual de forma clara, directa y confidencial.</p>
 
-  <img loading="lazy" src="images/tarot-LMX4RPB-1.webp">
+  <img src="images/tarot-LMX4RPB-1.webp">
 
   <a class="btn" href="https://wa.me/5216634571494" target="_blank">
     Contactame ahora
