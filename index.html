@@ -76,6 +76,7 @@
     90%, 100% { transform: translateX(-3069px); }
   }
   @media (max-width: 768px) {
+    #contacto > div { grid-template-columns: 1fr !important; }
     .about-grid { grid-template-columns: 1fr; }
     .about-grid img { width:100% !important; max-width:320px !important; justify-self:center; }
     .tarot-list-grid { grid-template-columns:1fr; }
@@ -89,10 +90,10 @@
   <header>
     <strong></strong>
     <nav>
-      <a href="#">Inicio</a>
-      <a href="#">Servicios</a>
-      <a href="#">Sobre mí</a>
-    </nav>
+  <a href="#about">Quien soy</a>
+  <a href="#testimonios">Testimonios</a>
+  <a href="#contacto">Contactame</a>
+</nav>
   </header>
 
   <section class="hero">
@@ -105,15 +106,15 @@
   </section>
 
   <section class="reviews" style="padding:60px 40px; background:white; text-align:center;">
-    <h2 style="font-size:36px;">Lo que dicen mis consultantes</h2>
+    <h2 style="font-size:32px;">Lo que dicen mis consultantes</h2>
     <script defer async src='https://cdn.trustindex.io/loader.js?c7525e4693ee446aa4465335b90'></script>
   </section>
 
-  <section class="about" style="padding: 60px 40px; max-width: 1000px; margin: 0 auto;">
+  <section id="about" class="about" style="padding: 60px 40px; max-width: 1000px; margin: 0 auto;">
     <div class="about-grid" style="display:grid; gap: 30px; align-items: center;">
       <img src="images/tarotistaclaudiaenguadalajara.webp" alt="Tarotista Claudia en Guadalajara" style="width:100%; max-width:320px; justify-self:center; border-radius:20px; box-shadow:0 4px 20px rgba(0,0,0,0.12);">
       <div>
-        <h2 style="font-size:36px;">Sobre Claudia</h2>
+        <h2 style="font-size:32px;">Sobre Claudia</h2>
         <p><strong>Tarotista Claudia Especialista en lectura del tarot</strong></p>
         <p>Soy Claudia, tarotista intuitiva ubicada en Guadalajara Jalisco con más de 7 años de experiencia guiando a mujeres que buscan respuestas en el amor, en sus emociones y en su camino personal. Creo profundamente que el tarot no adivina: revela. Es una herramienta para mirar hacia adentro, soltar lo que duele y tomar decisiones desde la claridad.</p>
         <p>Mi enfoque es directo, empático y sin juicios. Cada lectura es una conversación sagrada entre tu energía y la guía que el universo tiene para ti. No estás sola: si estás aquí, es porque tu alma busca entender, cerrar ciclos y recuperar su poder.</p>
@@ -140,8 +141,8 @@
     </div>
   </section>
 
-  <section style="padding: 60px 40px; max-width: 1000px; margin: 0 auto;">
-    <h2 style="font-size:36px; text-align:center;">Testimonios</h2>
+  <section id="testimonios" style="padding: 60px 40px; max-width: 1000px; margin: 0 auto;">
+    <h2 style="font-size:32px; text-align:center;">Testimonios</h2>
     <div class="testimonials-wrap">
       <div class="testimonials-track">
         <img src="images/whatsapp-image-2025-09-03-at-11.44.32_13225e61.webp" alt="Testimonio WhatsApp 1">
@@ -158,9 +159,29 @@
     </div>
   </section>
 
-  <a href="https://wa.me/5216634571494" class="whatsapp-float" target="_blank" rel="noopener">
+  <section id="contacto" style="padding:60px 40px; max-width:1000px; margin:0 auto;">
+  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; align-items:center;">
+    <img src="images/tarot-LMX4RPB-1.webp" alt="Primera pregunta gratis tarot" style="width:100%; border-radius:18px; box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+    <div>
+      <h2 style="font-size:32px;">Primera Pregunta Gratis: Empieza con Claridad</h2>
+      <p>Haz una pregunta. Recibe una respuesta. Sin compromiso.</p>
+      <p>¿Tienes algo que te inquieta? ¿Una duda que no te deja dormir?</p>
+      <p>Claudia te ofrece una tirada gratuita para responder una pregunta puntual de forma clara, directa y confidencial.</p>
+      <p>Es tu oportunidad de sentir cómo trabaja el tarot antes de agendar una lectura completa. Porque a veces, una sola respuesta puede cambiarlo todo.</p>
+      <a class="btn" href="https://wa.me/5216634571494" target="_blank" rel="noopener">Contactame ahora</a>
+    </div>
+  </div>
+</section>
+
+<footer style="padding:40px 20px; text-align:center; font-size:14px; color:#555;">
+  <p>Av. Alcalde 159, Centro, 44100 Guadalajara, Jal.</p>
+  <p>Portalmistico.co | Todos los derechos reservados</p>
+</footer>
+
+<a href="https://wa.me/5216634571494" class="whatsapp-float" target="_blank" rel="noopener">
     <div class="whatsapp-tooltip">¿Puedo ayudarte?</div>
     <img src="images/whatsapp-logo-4456.svg" alt="WhatsApp" class="wa-icon">
   </a>
 </body>
 </html>
+
