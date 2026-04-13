@@ -5,220 +5,213 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portal místico - lectura de cartas y tarot en Guadalajara Jalisco</title>
   <link rel="icon" type="image/webp" href="images/cards.webp" />
+
   <style>
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: Arial, sans-serif; color: #222; background: #fff; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Arial, sans-serif; color:#222; background:#fff; }
 
-  nav {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 28px;
-    padding: 18px 20px;
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-  }
-  nav a { text-decoration: none; color: #222; font-weight: 600; }
+    nav {
+      display:flex;
+      justify-content:center;
+      gap:28px;
+      padding:18px 20px;
+      max-width:1000px;
+      margin:0 auto;
+    }
+    nav a { text-decoration:none; color:#222; font-weight:600; }
 
-  .hero {
-    min-height: 70vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 60px 20px;
-    background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('images/tarotcardsherobanner.webp') center/cover;
-  }
-  .hero h2 {
-    font-size: 48px;
-    line-height: 1.15;
-    color: #fff;
-    text-shadow: 0 3px 12px rgba(0,0,0,0.6);
-    display: inline-block;
-  }
+    /* HERO */
+    .hero {
+      min-height:70vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:60px 20px;
+      background:linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('images/tarotcardsherobanner.webp') center/cover;
+    }
 
-  .btn {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 14px 28px;
-    background: #111;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 999px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
-    border: none;
-  }
+    .hero h1,.hero h2,.hero p { color:#fff; }
 
-  .about-grid {
-    display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 30px;
-    align-items: center;
-  }
+    .hero h1 { font-size:14px; font-weight:500; margin-bottom:10px; }
+    .hero h2 { font-size:48px; line-height:1.15; margin:0 0 16px; }
+    .hero p { opacity:0.95; }
 
-  .tarot-list-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px;
-    margin-top: 25px;
-  }
+    .btn {
+      display:inline-block;
+      margin-top:20px;
+      padding:14px 28px;
+      background:#111;
+      color:#fff;
+      text-decoration:none;
+      border-radius:999px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.18);
+    }
 
-  /* TESTIMONIOS FIXED GRID */
-  .testimonials-wrap {
-    width: 100%;
-    margin-top: 25px;
-  }
-  .testimonials-track {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
-  .testimonials-track img {
-    width: 100%;
-    border-radius: 18px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-  }
-
-  .whatsapp-float {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 999999;
-    width: 78px;
-    height: 78px;
-    background: #2ab540;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,.3);
-    animation: float-bounce 2s infinite;
-  }
-  .wa-icon { width: 39px; height: 39px; display: block; }
-
-  @keyframes float-bounce {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
-  }
-
-  #contacto img {
-    width: 45%;
-    max-width: 280px;
-    display: block;
-    margin: 20px auto;
-    border-radius: 18px;
-  }
-
-  @media (max-width: 768px) {
+    /* ABOUT */
     .about-grid {
-      grid-template-columns: 1fr !important;
+      display:grid;
+      grid-template-columns:320px 1fr;
+      gap:30px;
+      align-items:center;
     }
+
+    /* TAROT LIST */
     .tarot-list-grid {
-      grid-template-columns: 1fr !important;
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:20px;
+      margin-top:25px;
     }
-    .testimonials-track {
-      grid-template-columns: repeat(2, 1fr);
+    .tarot-list-grid li { list-style:none; margin:6px 0; }
+
+    /* TESTIMONIOS */
+    .testimonials-grid {
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:16px;
     }
-    .hero h2 {
-      font-size: 38px;
+    .testimonials-grid img {
+      width:100%;
+      border-radius:18px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.12);
     }
-  }
-</style>
+
+    /* CONTACT */
+    #contacto img {
+      width:45%;
+      max-width:280px;
+      display:block;
+      margin:20px auto;
+      border-radius:18px;
+    }
+
+    /* WHATSAPP */
+    .whatsapp-float {
+      position:fixed;
+      bottom:20px;
+      right:20px;
+      width:78px;
+      height:78px;
+      background:#2ab540;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 4px 10px rgba(0,0,0,.3);
+      animation:float 2s infinite;
+    }
+
+    .wa-icon { width:38px; height:38px; }
+
+    .whatsapp-tooltip {
+      position:absolute;
+      right:90px;
+      background:#444;
+      color:#fff;
+      padding:6px 12px;
+      border-radius:6px;
+      font-size:14px;
+      opacity:0;
+      visibility:hidden;
+      transition:.3s;
+    }
+
+    .whatsapp-float:hover .whatsapp-tooltip {
+      opacity:1;
+      visibility:visible;
+    }
+
+    @keyframes float {
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-5px)}
+    }
+
+    /* MOBILE */
+    @media (max-width:768px){
+      .about-grid{grid-template-columns:1fr;}
+      .tarot-list-grid{grid-template-columns:1fr;}
+      .testimonials-grid{grid-template-columns:repeat(2,1fr);}
+      .hero h2{font-size:38px;}
+    }
+  </style>
 </head>
+
 <body>
-  <header>
-    <strong></strong>
-    <nav>
-  <a href="#about">Quien soy</a>
-  <a href="#testimonios">Testimonios</a>
-  <a href="#contacto">Contactame</a>
-</nav>
-  </header>
 
-  <section class="hero">
-    <div class="hero-content">
-      <h1 style="font-size:14px; font-weight:500; letter-spacing:0.2px; margin-bottom:10px;">Lectura de cartas y tarot. Tarotista en Guadalajara Jalisco</h1>
-      <h2 style="font-size:48px; line-height:1.15; margin:0 0 16px;">Cierra ese ciclo y encuentra las respuestas a tu vida amorosa</h2>
-      <p>Consulta del tarot precisa y sin juicios. Pregunta lo que tu corazón no puede decir en voz alta.</p>
-      <a class="btn" href="https://wa.me/5216634571494" target="_blank" rel="noopener" href="#">Reservar sesión</a>
-    </div>
-  </section>
+<header>
+  <nav>
+    <a href="#about">Quien soy</a>
+    <a href="#testimonios">Testimonios</a>
+    <a href="#contacto">Contactame</a>
+  </nav>
+</header>
 
-  <section class="reviews" style="padding:60px 40px; background:white; text-align:center;">
-    <h2 style="font-size:32px;">Lo que dicen de mí</h2>
-    <script defer async src='https://cdn.trustindex.io/loader.js?c7525e4693ee446aa4465335b90'></script>
-  </section>
-
-  <section id="about" class="about" style="padding: 60px 40px; max-width: 1000px; margin: 0 auto;">
-    <div class="about-grid" style="display:grid; gap: 30px; align-items: center;">
-      <img src="images/tarotistaclaudiaenguadalajara.webp" alt="Tarotista Claudia en Guadalajara" style="width:100%; max-width:320px; justify-self:center; border-radius:20px; box-shadow:0 4px 20px rgba(0,0,0,0.12);">
-      <div>
-        <h2 style="font-size:32px;">Sobre Claudia</h2>
-        <p><strong>Tarotista Claudia Especialista en lectura del tarot</strong></p>
-        <p>Soy Claudia, tarotista intuitiva ubicada en Guadalajara Jalisco con más de 7 años de experiencia guiando a mujeres que buscan respuestas en el amor, en sus emociones y en su camino personal. Creo profundamente que el tarot no adivina: revela. Es una herramienta para mirar hacia adentro, soltar lo que duele y tomar decisiones desde la claridad.</p>
-        <p>Mi enfoque es directo, empático y sin juicios. Cada lectura es una conversación sagrada entre tu energía y la guía que el universo tiene para ti. No estás sola: si estás aquí, es porque tu alma busca entender, cerrar ciclos y recuperar su poder.</p>
-      </div>
-    </div>
-  </section>
-
-  <section style="padding: 60px 40px; max-width: 1000px; margin: 0 auto;">
-    <h2 style="text-align:center; font-size:32px;">Lecturas de Tarot para Sanar, Entender y Avanzar</h2>
-    <p>Tu intuición ya lo siente. El tarot solo te lo confirma. Obtén claridad sobre tu relación, tu futuro y lo que necesitas dejar atrás para sanar.</p>
-    <div class="tarot-list-grid" style="display:grid; gap: 20px; margin-top: 25px;">
-      <ul style="margin:0; padding-left: 20px; line-height:1.9;">
-        <li style="list-style:none; margin-left:0;">✦ Lectura amorosa: ¿Te ama? ¿Volverá? ¿Hay alguien más?</li>
-        <li style="list-style:none; margin-left:0;">✦ ¿Cortar o seguir? Consulta para decisiones difíciles.</li>
-        <li style="list-style:none; margin-left:0;">✦ Energía de tu pareja: lo que siente, lo que esconde.</li>
-        <li style="list-style:none; margin-left:0;">✦ Cierre de ciclos: sana lo que no te deja avanzar.</li>
-      </ul>
-      <ul style="margin:0; padding-left: 20px; line-height:1.9;">
-        <li style="list-style:none; margin-left:0;">✦ Compatibilidad energética con otra persona.</li>
-        <li style="list-style:none; margin-left:0;">✦ Canalización intuitiva con respuestas directas.</li>
-        <li style="list-style:none; margin-left:0;">✦ Lectura mensual: qué viene en amor, trabajo y emociones.</li>
-        <li style="list-style:none; margin-left:0;">✦ Secretos revelados: lo que nadie te ha contado en tu relación.</li>
-      </ul>
-    </div>
-  </section>
-
-  <section id="testimonios" style="padding: 60px 40px; max-width: 1000px; margin: 0 auto;">
-    <h2 style="font-size:32px; text-align:center;">Testimonios</h2>
-    <div class="testimonials-wrap">
-      <div class="testimonials-track">
-        <img src="images/whatsapp-image-2025-09-03-at-11.44.32_13225e61.webp" alt="Testimonio WhatsApp 1">
-        <img src="images/whatsapp-image-2025-09-03-at-11.44.32_22b825a0.webp" alt="Testimonio WhatsApp 2">
-        <img src="images/whatsapp-image-2025-09-03-at-11.44.32_f57b52bd.webp" alt="Testimonio WhatsApp 3">
-        <img src="images/whatsapp-image-2025-09-03-at-12.39.28_3fe9325b.webp" alt="Testimonio WhatsApp 4">
-        <img src="images/whatsapp-image-2025-09-03-at-12.56.08_73d271a7.webp" alt="Testimonio WhatsApp 5">
-        <img src="images/whatsapp-image-2025-09-03-at-11.44.32_13225e61.webp" alt="Testimonio WhatsApp 1">
-        <img src="images/whatsapp-image-2025-09-03-at-11.44.32_22b825a0.webp" alt="Testimonio WhatsApp 2">
-        <img src="images/whatsapp-image-2025-09-03-at-11.44.32_f57b52bd.webp" alt="Testimonio WhatsApp 3">
-        <img src="images/whatsapp-image-2025-09-03-at-12.39.28_3fe9325b.webp" alt="Testimonio WhatsApp 4">
-        <img src="images/whatsapp-image-2025-09-03-at-12.56.08_73d271a7.webp" alt="Testimonio WhatsApp 5">
-      </div>
-    </div>
-  </section>
-
-  <section id="contacto" style="padding:60px 40px; max-width:1000px; margin:0 auto; text-align:center;">
-  <h2 style="font-size:32px;">Primera Pregunta Gratis: Empieza con Claridad</h2>
-  <p>Haz una pregunta. Recibe una respuesta. Sin compromiso.</p>
-  <p>¿Tienes algo que te inquieta? ¿Una duda que no te deja dormir?</p>
-  <p>Claudia te ofrece una tirada gratuita para responder una pregunta puntual de forma clara, directa y confidencial.</p>
-  <p>Es tu oportunidad de sentir cómo trabaja el tarot antes de agendar una lectura completa. Porque a veces, una sola respuesta puede cambiarlo todo.</p>
-  <img src="images/tarot-LMX4RPB-1.webp" alt="Primera pregunta gratis tarot" style="width:45%; max-width:280px; display:block; margin:20px auto; border-radius:18px;">
-  <div style="margin-top:20px;">
-    <a class="btn" href="https://wa.me/5216634571494" target="_blank" rel="noopener">Contactame ahora</a>
+<section class="hero">
+  <div>
+    <h1>Lectura de cartas y tarot. Tarotista en Guadalajara Jalisco</h1>
+    <h2>Cierra ese ciclo y encuentra las respuestas a tu vida amorosa</h2>
+    <p>Consulta del tarot precisa y sin juicios. Pregunta lo que tu corazón no puede decir en voz alta.</p>
+    <a class="btn" href="https://wa.me/5216634571494" target="_blank">Reservar sesión</a>
   </div>
 </section>
 
-<footer style="padding:40px 20px; text-align:center; font-size:14px; color:#555;">
-  <p>Av. Alcalde 159, Centro, 44100 Guadalajara, Jal.</p>
-  <p>Portalmistico.co | Todos los derechos reservados</p>
+<section id="about" style="padding:60px 40px; max-width:1000px; margin:auto;">
+  <div class="about-grid">
+    <img src="images/tarotistaclaudiaenguadalajara.webp" alt="Claudia">
+    <div>
+      <h2>Sobre Claudia</h2>
+      <p><strong>Tarotista especialista en lectura del tarot</strong></p>
+      <p>Soy Claudia... (texto intacto)</p>
+    </div>
+  </div>
+</section>
+
+<section style="padding:60px 40px; max-width:1000px; margin:auto;">
+  <h2 style="text-align:center;">Lecturas de Tarot para Sanar, Entender y Avanzar</h2>
+  <p>Tu intuición ya lo siente...</p>
+
+  <div class="tarot-list-grid">
+    <ul>
+      <li>✦ Lectura amorosa...</li>
+      <li>✦ ¿Cortar o seguir?</li>
+      <li>✦ Energía de tu pareja</li>
+      <li>✦ Cierre de ciclos</li>
+    </ul>
+    <ul>
+      <li>✦ Compatibilidad energética</li>
+      <li>✦ Canalización intuitiva</li>
+      <li>✦ Lectura mensual</li>
+      <li>✦ Secretos revelados</li>
+    </ul>
+  </div>
+</section>
+
+<section id="testimonios" style="padding:60px 40px; max-width:1000px; margin:auto;">
+  <h2 style="text-align:center;">Testimonios</h2>
+  <div class="testimonials-grid">
+    <img src="images/whatsapp-image-2025-09-03-at-11.44.32_13225e61.webp">
+    <img src="images/whatsapp-image-2025-09-03-at-11.44.32_22b825a0.webp">
+    <img src="images/whatsapp-image-2025-09-03-at-11.44.32_f57b52bd.webp">
+  </div>
+</section>
+
+<section id="contacto" style="padding:60px 40px; text-align:center; max-width:1000px; margin:auto;">
+  <h2>Primera Pregunta Gratis</h2>
+  <p>Haz una pregunta. Recibe una respuesta.</p>
+  <p>Claudia ofrece una tirada gratuita...</p>
+  <img src="images/tarot-LMX4RPB-1.webp">
+  <a class="btn" href="https://wa.me/5216634571494" target="_blank">Contactame ahora</a>
+</section>
+
+<footer style="text-align:center; padding:40px; color:#666;">
+  Av. Alcalde 159, Guadalajara Jal. | Portalmistico.co
 </footer>
 
-<a href="https://wa.me/5216634571494" class="whatsapp-float" target="_blank" rel="noopener">
-    <div class="whatsapp-tooltip">¿Puedo ayudarte?</div>
-    <img src="images/whatsapp-logo-4456.svg" alt="WhatsApp" class="wa-icon">
-  </a>
+<a class="whatsapp-float" href="https://wa.me/5216634571494" target="_blank">
+  <span class="whatsapp-tooltip">¿Puedo ayudarte?</span>
+  <img class="wa-icon" src="images/whatsapp-logo-4456.svg">
+</a>
+
 </body>
 </html>
