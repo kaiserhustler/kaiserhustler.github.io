@@ -45,12 +45,21 @@
   .tarot-list-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; margin-top:25px; }
   .testimonials-wrap { overflow:hidden; width:100%; margin-top:25px; }
   .testimonials-track {
-    display:flex;
-    gap:8px;
-    width:max-content;
-    animation: scroll-testimonials 75s steps(10) infinite;
+    display: flex;
+    gap: 8px;
+    width: max-content;
+    animation: scroll-testimonials 50s steps(10) infinite;
   }
-  .testimonials-track img { width:320px; max-width:320px; flex-shrink:0; border-radius:18px; box-shadow:0 4px 20px rgba(0,0,0,0.12); }
+  .testimonials-track img {
+    width: 320px;
+    height: auto;
+    max-width: 320px;
+    flex: 0 0 320px;
+    object-fit: contain;
+    display: block;
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  }
   .whatsapp-float {
     position: fixed; bottom: 20px; right: 20px; z-index: 999999;
     width: 78px; height: 78px; background: #2ab540; border-radius: 50%;
@@ -66,6 +75,8 @@
   @keyframes float-bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
   @keyframes scroll-testimonials {
     from { transform: translateX(0); }
+    to { transform: translateX(-3280px); }
+  }
     to { transform: translateX(-3280px); }
   }
     10%, 18% { transform: translateX(-341px); }
@@ -108,10 +119,11 @@
       gap: 0 !important;
     }
     .testimonials-track img {
-      width: 100vw !important;
-      max-width: 100vw !important;
-      flex: 0 0 100vw;
-      object-fit: cover;
+      width: calc(100vw - 40px) !important;
+      max-width: calc(100vw - 40px) !important;
+      flex: 0 0 calc(100vw - 40px);
+      height: auto;
+      object-fit: contain;
     }
     .hero {
       padding: 50px 20px;
