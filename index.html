@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portal Místico Demo</title>
+  <link rel="icon" type="image/webp" href="images/cards.webp" />
   <style>
     * { box-sizing: border-box; }
     body {
@@ -37,7 +38,7 @@
       text-align: center;
       padding: 60px 20px;
       background: linear-gradient(rgba(255,255,255,0.35), rgba(255,255,255,0.35)),
-        url('https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?q=80&w=1600&auto=format&fit=crop') center/cover;
+        url('images/tarotcardsherobanner.webp') center/cover;
     }
     .hero-content {
       max-width: 700px;
@@ -121,37 +122,10 @@
         max-width: 100% !important;
       }
       .testimonials-track {
-        gap: 12px !important;
-      }
-      .about-grid {
-        display: grid !important;
-        grid-template-columns: 1fr !important;
-        gap: 20px !important;
-      }
-      .about-grid img {
-        width: 100% !important;
-        max-width: 100% !important;
-        display: block !important;
-      }
-      .tarot-list-grid {
-        display: grid !important;
-        grid-template-columns: 1fr !important;
-        gap: 10px !important;
-      }
-      .about, .reviews {
-        padding: 40px 20px !important;
-      }
-    }
-  .testimonials-wrap {
-      overflow: hidden;
-      width: 100%;
-      margin-top: 25px;
-    }
-    .testimonials-track {
       display: flex;
-      gap: 20px;
+      gap: 0;
       width: max-content;
-      animation: scroll-testimonials 24s linear infinite;
+      animation: scroll-testimonials 40s linear infinite;
     }
     .testimonials-track img {
       width: calc((1000px - 40px) / 3);
@@ -161,7 +135,10 @@
       flex-shrink: 0;
     }
     @keyframes scroll-testimonials {
-      from { transform: translateX(0); }
+      0% { transform: translateX(0); }
+      20% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
       to { transform: translateX(-50%); }
     }
 
