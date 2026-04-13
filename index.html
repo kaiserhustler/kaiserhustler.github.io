@@ -34,7 +34,7 @@
     line-height: 1.15;
     text-shadow: 0 3px 12px rgba(0,0,0,0.18);
     display: inline-block;
-    background: rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.10);
     padding: 12px 18px;
     border-radius: 16px;
     backdrop-filter: blur(2px);
@@ -48,11 +48,11 @@
   .about-grid { display:grid; grid-template-columns:320px 1fr; gap:30px; align-items:center; }
   .tarot-list-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; margin-top:25px; }
   .testimonials-wrap { overflow:hidden; width:100%; margin-top:25px; }
-  .testimonials-track { display:flex; gap:0; width:max-content; animation: scroll-testimonials 40s linear infinite; }
+  .testimonials-track { display:flex; gap:8px; width:max-content; animation: scroll-testimonials 60s linear infinite; }
   .testimonials-track img { width:333px; max-width:333px; flex-shrink:0; border-radius:18px; box-shadow:0 4px 20px rgba(0,0,0,0.12); }
   .whatsapp-float {
     position: fixed; bottom: 20px; right: 20px; z-index: 999999;
-    width: 78px; height: 78px; background: #25D366; border-radius: 50%;
+    width: 78px; height: 78px; background: #2ab540; border-radius: 50%;
     display:flex; align-items:center; justify-content:center;
     box-shadow: 0 4px 10px rgba(0,0,0,.3); animation: float-bounce 2s infinite;
   }
@@ -63,7 +63,18 @@
   }
   .whatsapp-float:hover .whatsapp-tooltip { opacity:1; }
   @keyframes float-bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
-  @keyframes scroll-testimonials { 0%,20%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+  @keyframes scroll-testimonials {
+    0%, 8% { transform: translateX(0); }
+    10%, 18% { transform: translateX(-341px); }
+    20%, 28% { transform: translateX(-682px); }
+    30%, 38% { transform: translateX(-1023px); }
+    40%, 48% { transform: translateX(-1364px); }
+    50%, 58% { transform: translateX(-1705px); }
+    60%, 68% { transform: translateX(-2046px); }
+    70%, 78% { transform: translateX(-2387px); }
+    80%, 88% { transform: translateX(-2728px); }
+    90%, 100% { transform: translateX(-3069px); }
+  }
   @media (max-width: 768px) {
     .about-grid { grid-template-columns: 1fr; }
     .about-grid img { width:100% !important; max-width:320px !important; justify-self:center; }
