@@ -28,13 +28,13 @@
     justify-content: center;
     text-align: center;
     padding: 60px 20px;
-    background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('images/tarotcardsherobanner.webp') center/cover;
+    background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('images/tarotcardsherobanner.webp') center/cover;
   }
-  .hero-content { max-width: 900px; }
   .hero h2 {
     font-size: 48px;
     line-height: 1.15;
-    text-shadow: 0 3px 12px rgba(0,0,0,0.28);
+    color: #fff;
+    text-shadow: 0 3px 12px rgba(0,0,0,0.6);
     display: inline-block;
   }
 
@@ -50,7 +50,6 @@
     border: none;
   }
 
-  /* ABOUT */
   .about-grid {
     display: grid;
     grid-template-columns: 320px 1fr;
@@ -58,7 +57,6 @@
     align-items: center;
   }
 
-  /* TAROT LIST */
   .tarot-list-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -66,29 +64,22 @@
     margin-top: 25px;
   }
 
-  /* TESTIMONIALS */
+  /* TESTIMONIOS FIXED GRID */
   .testimonials-wrap {
-    overflow: hidden;
     width: 100%;
     margin-top: 25px;
   }
   .testimonials-track {
-    display: flex;
-    gap: 8px;
-    width: max-content;
-    animation: scroll-testimonials 50s steps(10) infinite;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
   }
   .testimonials-track img {
-    width: 320px;
-    max-width: 320px;
-    flex: 0 0 320px;
-    height: auto;
-    object-fit: contain;
+    width: 100%;
     border-radius: 18px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.12);
   }
 
-  /* WHATSAPP */
   .whatsapp-float {
     position: fixed;
     bottom: 20px;
@@ -106,70 +97,31 @@
   }
   .wa-icon { width: 39px; height: 39px; display: block; }
 
-  .whatsapp-tooltip {
-    position: absolute;
-    right: 90px;
-    background: #444;
-    color: #fff;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 15px;
-    opacity: 0;
-    transition: opacity .3s ease;
-    white-space: nowrap;
-  }
-  .whatsapp-float:hover .whatsapp-tooltip { opacity: 1; }
-
   @keyframes float-bounce {
     0%,100% { transform: translateY(0); }
     50% { transform: translateY(-5px); }
   }
 
-  @keyframes scroll-testimonials {
-    from { transform: translateX(0); }
-    to { transform: translateX(-3280px); }
-  }
-
-  /* CONTACT IMAGE FIX */
-  #contacto > div {
-    grid-template-columns: 1fr !important;
-    text-align: center;
-  }
   #contacto img {
     width: 45%;
     max-width: 280px;
     display: block;
-    margin: 20px auto 0;
+    margin: 20px auto;
     border-radius: 18px;
   }
 
-  /* MOBILE */
   @media (max-width: 768px) {
-    nav {
-      flex-wrap: wrap;
-      gap: 14px;
-    }
     .about-grid {
       grid-template-columns: 1fr !important;
-    }
-    .about-grid img {
-      width: 100% !important;
-      max-width: 320px !important;
-      justify-self: center;
     }
     .tarot-list-grid {
       grid-template-columns: 1fr !important;
     }
-    .hero {
-      padding: 50px 20px;
+    .testimonials-track {
+      grid-template-columns: repeat(2, 1fr);
     }
     .hero h2 {
       font-size: 38px;
-    }
-    .testimonials-track img {
-      width: calc(100vw - 40px) !important;
-      max-width: calc(100vw - 40px) !important;
-      flex: 0 0 calc(100vw - 40px);
     }
   }
 </style>
@@ -194,7 +146,7 @@
   </section>
 
   <section class="reviews" style="padding:60px 40px; background:white; text-align:center;">
-    <h2 style="font-size:32px;">Lo que dicen mis consultantes</h2>
+    <h2 style="font-size:32px;">Lo que dicen de mí</h2>
     <script defer async src='https://cdn.trustindex.io/loader.js?c7525e4693ee446aa4465335b90'></script>
   </section>
 
