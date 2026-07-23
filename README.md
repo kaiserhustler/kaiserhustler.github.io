@@ -482,12 +482,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
         </article>
         <article class="service-card">
           <svg class="service-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M10 34 L10 18 L24 10 L38 18 L38 34 Z" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="24" y1="22" x2="24" y2="34" stroke="currentColor" stroke-width="1.6"/></svg>
-          <h3>Mobiliario &amp; Decoración</h3>
+          <h3>Digitalizacion</h3>
           <p>Piezas y ambientaciones diseñadas junto con el espacio, no añadidas después.</p>
         </article>
         <article class="service-card">
           <svg class="service-icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="16" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M24 8 L24 24 L34 30" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>
-          <h3>Diseño Exterior</h3>
+          <h3>Modelado &amp; renderizado</h3>
           <p>Fachadas, paisajismo y espacios de transición entre lo construido y el terreno.</p>
         </article>
         <article class="service-card">
