@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OBRA — Estudio de Arquitectura</title>
-<meta name="description" content="OBRA es un estudio de arquitectura enfocado en diseño residencial, planificación y soluciones a medida.">
+<title>SÍNTESIS — Estudio de Arquitectura</title>
+<meta name="description" content="SÍNTESIS es un estudio de arquitectura enfocado en diseño residencial, planificación y soluciones a medida.">
 
 <!-- Favicon (usa la marca del sitio, sin archivos extra que subir) -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23ECE9E1'/%3E%3Cpath d='M4 32 L20 8 L36 32' fill='none' stroke='%231B1D1E' stroke-width='3' stroke-linejoin='round' stroke-linecap='round'/%3E%3Cline x1='10' y1='32' x2='10' y2='22' stroke='%231B1D1E' stroke-width='3'/%3E%3Cline x1='30' y1='32' x2='30' y2='22' stroke='%231B1D1E' stroke-width='3'/%3E%3C/svg%3E">
@@ -13,12 +13,12 @@
 
 <!-- Open Graph / redes sociales -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="OBRA — Estudio de Arquitectura">
+<meta property="og:title" content="SÍNTESIS — Estudio de Arquitectura">
 <meta property="og:description" content="Diseñamos espacios simples, auténticos y cercanos a la naturaleza. Arquitectura, interiorismo y planificación a medida.">
 <meta property="og:image" content="og-image.png">
 <meta property="og:locale" content="es_LA">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="OBRA — Estudio de Arquitectura">
+<meta name="twitter:title" content="SÍNTESIS — Estudio de Arquitectura">
 <meta name="twitter:description" content="Diseñamos espacios simples, auténticos y cercanos a la naturaleza.">
 <meta name="twitter:image" content="og-image.png">
 <meta name="theme-color" content="#ECE9E1">
@@ -29,7 +29,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   OBRA — Estudio de Arquitectura
+   SÍNTESIS — Estudio de Arquitectura
    Tokens: papel piedra + tinta + azul de plano + bronce
    ============================================================ */
 
@@ -723,7 +723,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 OBRA Arquitectura. Todos los derechos reservados.</p>
+    <p>© 2026 SÍNTESIS Arquitectura. Todos los derechos reservados.</p>
   </div>
 </footer>
 
