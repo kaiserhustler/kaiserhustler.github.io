@@ -352,7 +352,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
           <line x1="30" y1="32" x2="30" y2="22" stroke="currentColor" stroke-width="2.5"/>
         </svg>
       </span>
-      <span class="brand-name">OBRA<span class="brand-suffix">Arquitectura</span></span>
+      <span class="brand-name">SÍNTESIS<span class="brand-suffix">Arquitectura</span></span>
     </a>
 
     <nav class="main-nav" id="main-nav" aria-label="Navegación principal">
