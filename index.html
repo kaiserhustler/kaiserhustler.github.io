@@ -25,10 +25,19 @@
   .wrap{ max-width: 980px; margin: 0 auto; padding: 28px 20px 60px; }
 
   /* header */
-  .head{ display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); padding-bottom:16px; }
+  .head{ display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); padding-bottom:16px; gap:16px; flex-wrap:wrap; }
   .brand{ display:flex; align-items:center; gap:10px; letter-spacing: 0.14em; font-size: 13px; font-weight:600; }
   .brand svg{ display:block; }
   .about{ font-size:11px; letter-spacing:0.12em; color:var(--ink-dim); }
+
+  .tabs{ display:flex; gap:22px; }
+  .tab{
+    background:none; border:none; color:var(--ink-dim); font: inherit;
+    font-size:11px; letter-spacing:0.14em; cursor:pointer; padding:0 0 6px;
+    border-bottom:2px solid transparent;
+  }
+  .tab.active{ color: var(--teal); border-bottom-color: var(--teal); }
+  .tab:hover{ color: var(--ink); }
 
   .hero{ text-align:center; padding: 46px 0 30px; }
   .hero h1{
@@ -51,6 +60,7 @@
   /* population block */
   .population{ margin-top: 34px; padding-top: 26px; border-top: 1px solid var(--line); }
   .population .label{ font-size:11px; letter-spacing:0.16em; color:var(--ink-dim); text-transform:uppercase; }
+  .population .icon, .population .icon-img{ margin: 0 auto 6px; }
   .population .value{
     font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
     font-size: clamp(38px, 8vw, 58px); font-weight:600; color: var(--teal);
@@ -69,8 +79,8 @@
     padding: 22px 18px 18px; position:relative; overflow:hidden;
   }
   .card .icon{ font-size:22px; line-height:1; margin-bottom:10px; display:block; }
+  .card .icon-img{ width:26px; height:26px; object-fit:contain; display:block; margin-bottom:10px; }
   .card .label{ font-size:11px; letter-spacing:0.14em; color:var(--ink-dim); text-transform:uppercase; }
-  .card .label small{ display:block; font-size:9px; letter-spacing:0.1em; margin-top:2px; opacity:0.7; }
   .card .value{
     font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
     font-size: clamp(28px, 6vw, 40px); font-weight:600; margin: 10px 0 2px;
@@ -78,8 +88,9 @@
   }
   .card .per{ font-size:11px; color:var(--ink-dim); letter-spacing:0.08em; }
   .card .rule{ height:1px; background:var(--line); margin: 14px 0 10px; }
-  .card .today{ font-size:12px; color:var(--ink-dim); }
-  .card .today b{ color:var(--ink); font-weight:600; }
+  .card .period{ font-size:12px; color:var(--ink-dim); }
+  .card .period b{ color:var(--ink); font-weight:600; }
+  .card .period.hidden{ display:none; }
 
   .pulse-rule{ margin: 46px 0 14px; opacity:0.7; }
   .footer{ text-align:center; font-size:11px; letter-spacing:0.2em; color:var(--ink-dim); }
@@ -96,6 +107,13 @@
     <div class="brand">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M2 12h4l2-7 4 14 3-10 2 3h5" stroke="#4fd6c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       PULSE
+    </div>
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-period="now">NOW</button>
+      <button class="tab" data-period="day">DAY</button>
+      <button class="tab" data-period="week">WEEK</button>
+      <button class="tab" data-period="month">MONTH</button>
+      <button class="tab" data-period="year">YEAR</button>
     </div>
     <div class="about">ABOUT</div>
   </div>
@@ -126,19 +144,20 @@
 <script>
 /* ============================================================
    CONFIG — edit this with your real data.
+
    Each stat is defined by a reference point, not a fixed value:
      referenceValue: the accumulated value at referenceTime
      referenceTime:  ISO timestamp when that value was exact
      perSecond:      global (worldwide) rate per second
-   The "now" value = referenceValue + perSecond * seconds elapsed.
-   This keeps the counter correct no matter when the page loads
-   or how long it stays open. When you get fresh data, just update
-   referenceValue / referenceTime — nothing else needs to change.
+   The "real" value at any instant = referenceValue + perSecond * seconds elapsed.
 
-   TO CHANGE AN ICON: just edit the "icon" field on any stat below.
-   You can paste any emoji (👶 🚗 💀 🔫 etc.) or any single character/
-   symbol — it just gets dropped into the card as plain text, no
-   image files or extra setup needed.
+   ICONS — use an emoji/character, OR a file you uploaded:
+     icon: "👶"                 -> rendered as text
+     icon: "icons/babies.svg"   -> rendered as an <img>, auto-detected
+                                    by file extension (.svg/.png/.jpg/.webp)
+   To use your own downloaded icons: put the image files in a folder
+   named "icons" right next to this index.html, then just point each
+   stat's "icon" field at the file path, e.g. "icons/skull.png".
    ============================================================ */
 const CONFIG = {
   timezone: "UTC", // use "local" for the visitor's browser time
@@ -151,108 +170,68 @@ const CONFIG = {
   },
 
   stats: [
-    {
-      id: "births",
-      label: "BABIES BORN",
-      icon: "👶",
-      color: "#4fd6c4",
-      perSecond: 4.3,
-      referenceValue: 0,
-      referenceTime: "2026-07-24T00:00:00Z"
-    },
-    {
-      id: "deaths",
-      label: "DEATHS",
-      icon: "✚",
-      color: "#ff6b5e",
-      perSecond: 1.8,
-      referenceValue: 0,
-      referenceTime: "2026-07-24T00:00:00Z"
-    },
-    {
-      id: "homicides",
-      label: "HOMICIDES",
-      icon: "◆",
-      color: "#b18cff",
-      perSecond: 0.014,
-      referenceValue: 0,
-      referenceTime: "2026-07-24T00:00:00Z"
-    },
-    {
-      id: "car_crashes",
-      label: "CAR CRASHES",
-      icon: "▲",
-      color: "#ffb454",
-      perSecond: 3.7,
-      referenceValue: 0,
-      referenceTime: "2026-07-24T00:00:00Z"
-    },
-    {
-      id: "prison",
-      label: "PEOPLE IN PRISON",
-      icon: "▦",
-      color: "#e8c76b",
-      perSecond: 0.6,
-      referenceValue: 0,
-      referenceTime: "2026-07-24T00:00:00Z"
-    },
-    {
-      id: "guns",
-      label: "GUNS SOLD",
-      icon: "—",
-      color: "#ff8fb0",
-      perSecond: 2.1,
-      referenceValue: 0,
-      referenceTime: "2026-07-24T00:00:00Z"
-    },
-    {
-      id: "divorces",
-      label: "DIVORCES",
-      icon: "♡",
-      color: "#4fd6c4",
-      perSecond: 1.1,
-      referenceValue: 0,
-      referenceTime: "2026-07-24T00:00:00Z"
-    },
-    {
-      id: "millionaires",
-      label: "MILLIONAIRES CREATED",
-      icon: "$",
-      color: "#e8c76b",
-      perSecond: 0.3,
-      referenceValue: 0,
-      referenceTime: "2026-07-24T00:00:00Z"
-    },
-    {
-      id: "gdp",
-      label: "WORLD GDP CREATED",
-      icon: "◎",
-      color: "#7fb3ff",
-      perSecond: 2900,
-      referenceValue: 0,
-      referenceTime: "2026-07-24T00:00:00Z",
-      prefix: "$"
-    }
+    { id: "births",       label: "BABIES BORN",          icon: "👶", color: "#4fd6c4", perSecond: 4.3,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z" },
+    { id: "deaths",       label: "DEATHS",                icon: "✚",  color: "#ff6b5e", perSecond: 1.8,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z" },
+    { id: "homicides",    label: "HOMICIDES",             icon: "◆",  color: "#b18cff", perSecond: 0.014, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z" },
+    { id: "car_crashes",  label: "CAR CRASHES",           icon: "▲",  color: "#ffb454", perSecond: 3.7,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z" },
+    { id: "prison",       label: "PEOPLE IN PRISON",      icon: "▦",  color: "#e8c76b", perSecond: 0.6,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z" },
+    { id: "guns",         label: "GUNS SOLD",             icon: "—",  color: "#ff8fb0", perSecond: 2.1,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z" },
+    { id: "divorces",     label: "DIVORCES",              icon: "♡",  color: "#4fd6c4", perSecond: 1.1,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z" },
+    { id: "millionaires", label: "MILLIONAIRES CREATED",  icon: "$",  color: "#e8c76b", perSecond: 0.3,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z" },
+    { id: "gdp",          label: "WORLD GDP CREATED",     icon: "◎",  color: "#7fb3ff", perSecond: 2900,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", prefix: "$" }
   ]
 };
 /* ============================================================ */
 
+const PERIOD_LABEL = { day: "today", week: "this week", month: "this month", year: "this year" };
+let currentPeriod = "now";
+const loadTime = Date.now();
+const ANIM_DURATION = 1800; // ms — how long the "count up from 0" intro lasts
+
+function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+
+// true value at a given instant, from the reference point
 function computeValue(stat, now){
   const ref = new Date(stat.referenceTime).getTime();
   const elapsedSec = Math.max(0, (now - ref) / 1000);
   return stat.referenceValue + stat.perSecond * elapsedSec;
 }
 
-// Always rounds down to a whole number — no decimals shown anywhere,
-// so a rate like 1.8/sec never renders as "3.5 deaths".
-function formatInt(n){
-  return Math.floor(n).toLocaleString('en-US');
+// main counter: animates up from 0 on page load, then tracks the real value
+function mainDisplayValue(stat, now){
+  const elapsed = now - loadTime;
+  if (elapsed < ANIM_DURATION){
+    const targetAtLoad = computeValue(stat, loadTime);
+    return targetAtLoad * easeOutCubic(elapsed / ANIM_DURATION);
+  }
+  return computeValue(stat, now);
 }
 
-function startOfDayUTC(now){
+function formatInt(n){
+  // always floors before formatting — a rate like 1.8/sec never shows as "3.5"
+  return Math.floor(Math.max(0, n)).toLocaleString('en-US');
+}
+
+function periodStart(period, now){
   const d = new Date(now);
-  d.setUTCHours(0,0,0,0);
-  return d.getTime();
+  d.setUTCHours(0, 0, 0, 0);
+  if (period === "day") return d.getTime();
+  if (period === "week"){
+    const day = d.getUTCDay();
+    const diffToMonday = (day === 0 ? 6 : day - 1);
+    d.setUTCDate(d.getUTCDate() - diffToMonday);
+    return d.getTime();
+  }
+  if (period === "month"){ d.setUTCDate(1); return d.getTime(); }
+  if (period === "year"){ d.setUTCMonth(0, 1); return d.getTime(); }
+  return now; // "now" -> no accumulation window
+}
+
+function iconHTML(icon){
+  if (/\.(svg|png|jpe?g|webp)$/i.test(icon)){
+    return `<img src="${icon}" class="icon-img" alt="">`;
+  }
+  return `<span class="icon">${icon}</span>`;
 }
 
 const grid = document.getElementById('grid');
@@ -263,55 +242,74 @@ CONFIG.stats.forEach(stat => {
   card.className = 'card';
   card.style.borderTop = `2px solid ${stat.color}`;
   card.innerHTML = `
-    <span class="icon">${stat.icon}</span>
+    ${iconHTML(stat.icon)}
     <div class="label">${stat.label}</div>
     <div class="value" style="color:${stat.color}">0</div>
     <div class="per">/ sec</div>
     <div class="rule"></div>
-    <div class="today"><b>0</b> today</div>
+    <div class="period"><b>0</b> <span class="period-word">today</span></div>
   `;
   grid.appendChild(card);
   cards[stat.id] = {
     valueEl: card.querySelector('.value'),
-    todayEl: card.querySelector('.today b')
+    periodRow: card.querySelector('.period'),
+    periodValEl: card.querySelector('.period b'),
+    periodWordEl: card.querySelector('.period-word')
   };
 });
 
-function tick(){
+// tabs
+document.getElementById('tabs').addEventListener('click', (e) => {
+  const btn = e.target.closest('.tab');
+  if (!btn) return;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  currentPeriod = btn.dataset.period;
+});
+
+function render(){
   const now = Date.now();
-  const dayStart = startOfDayUTC(now);
 
   CONFIG.stats.forEach(stat => {
-    const total = computeValue(stat, now);
-    const atDayStart = computeValue(stat, dayStart);
-    const today = Math.max(0, total - atDayStart);
-
+    const c = cards[stat.id];
     const prefix = stat.prefix || '';
-    cards[stat.id].valueEl.textContent = prefix + formatInt(total);
-    cards[stat.id].todayEl.textContent = prefix + formatInt(today);
+
+    // main number: 0 -> real value on load, then live thereafter
+    c.valueEl.textContent = prefix + formatInt(mainDisplayValue(stat, now));
+
+    // period row: always the true accumulated value, no intro animation
+    if (currentPeriod === "now"){
+      c.periodRow.classList.add('hidden');
+    } else {
+      const since = periodStart(currentPeriod, now);
+      const total = computeValue(stat, now) - computeValue(stat, since);
+      c.periodValEl.textContent = prefix + formatInt(total);
+      c.periodWordEl.textContent = PERIOD_LABEL[currentPeriod];
+      c.periodRow.classList.remove('hidden');
+    }
   });
 
   // world population
   const pop = CONFIG.population;
-  document.getElementById('popValue').textContent = formatInt(computeValue(pop, now));
-  document.getElementById('popDelta').textContent =
-    `+${Math.round(pop.perSecond)} people this second`;
+  document.getElementById('popValue').textContent = formatInt(mainDisplayValue(pop, now));
+  document.getElementById('popDelta').textContent = `+${Math.round(pop.perSecond)} people this second`;
 
   // clock
   const d = new Date(now);
   const useUTC = CONFIG.timezone === 'UTC';
-  const h = String(useUTC ? d.getUTCHours() : d.getHours()).padStart(2,'0');
-  const m = String(useUTC ? d.getUTCMinutes() : d.getMinutes()).padStart(2,'0');
-  const s = String(useUTC ? d.getUTCSeconds() : d.getSeconds()).padStart(2,'0');
+  const h = String(useUTC ? d.getUTCHours() : d.getHours()).padStart(2, '0');
+  const m = String(useUTC ? d.getUTCMinutes() : d.getMinutes()).padStart(2, '0');
+  const s = String(useUTC ? d.getUTCSeconds() : d.getSeconds()).padStart(2, '0');
   document.getElementById('clock').textContent = `${h}:${m}:${s}`;
   document.getElementById('tz').textContent = useUTC ? 'UTC' : Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric', timeZone: useUTC ? 'UTC' : undefined };
+  const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: useUTC ? 'UTC' : undefined };
   document.getElementById('dateRow').textContent = d.toLocaleDateString('en-US', opts).toUpperCase();
+
+  requestAnimationFrame(render);
 }
 
-tick();
-setInterval(tick, 1000);
+requestAnimationFrame(render);
 </script>
 </body>
 </html>
