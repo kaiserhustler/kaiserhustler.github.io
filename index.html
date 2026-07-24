@@ -58,15 +58,15 @@
   @keyframes blink{ 0%,100%{opacity:1} 50%{opacity:0.25} }
 
   /* population block */
-  .population{ margin-top: 34px; padding-top: 26px; border-top: 1px solid var(--line); }
+  .population{ margin-top: 34px; padding-top: 26px; border-top: 1px solid var(--line); text-align:center; }
   .population .label{ font-size:11px; letter-spacing:0.16em; color:var(--ink-dim); text-transform:uppercase; }
-  .population .icon, .population .icon-img{ margin: 0 auto 6px; }
+  .population .icon, .population .icon-img{ display:inline-block; margin: 0 0 6px; }
   .population .value{
     font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
     font-size: clamp(38px, 8vw, 58px); font-weight:600; color: var(--teal);
     font-variant-numeric: tabular-nums; margin: 8px 0 4px;
   }
-  .population .delta{ font-size:12px; color:var(--teal); letter-spacing:0.05em; opacity:0.85; }
+  .population .sub{ font-size:12px; color:var(--teal); letter-spacing:0.05em; opacity:0.85; }
 
   .grid{
     display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 34px;
@@ -77,20 +77,17 @@
   .card{
     background: var(--bg-panel); border:1px solid var(--line); border-radius:10px;
     padding: 22px 18px 18px; position:relative; overflow:hidden;
+    text-align:center;
   }
-  .card .icon{ font-size:22px; line-height:1; margin-bottom:10px; display:block; }
-  .card .icon-img{ width:26px; height:26px; object-fit:contain; display:block; margin-bottom:10px; }
+  .card .icon{ font-size:22px; line-height:1; margin-bottom:10px; display:inline-block; }
+  .card .icon-img{ width:26px; height:26px; object-fit:contain; display:inline-block; margin-bottom:10px; }
   .card .label{ font-size:11px; letter-spacing:0.14em; color:var(--ink-dim); text-transform:uppercase; }
   .card .value{
     font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-    font-size: clamp(28px, 6vw, 40px); font-weight:600; margin: 10px 0 2px;
+    font-size: clamp(28px, 6vw, 40px); font-weight:600; margin: 10px 0 4px;
     font-variant-numeric: tabular-nums;
   }
-  .card .per{ font-size:11px; color:var(--ink-dim); letter-spacing:0.08em; }
-  .card .rule{ height:1px; background:var(--line); margin: 14px 0 10px; }
-  .card .period{ font-size:12px; color:var(--ink-dim); }
-  .card .period b{ color:var(--ink); font-weight:600; }
-  .card .period.hidden{ display:none; }
+  .card .sub{ font-size:12px; color:var(--ink-dim); letter-spacing:0.06em; }
 
   .pulse-rule{ margin: 46px 0 14px; opacity:0.7; }
   .footer{ text-align:center; font-size:11px; letter-spacing:0.2em; color:var(--ink-dim); }
@@ -128,7 +125,7 @@
     <div class="population">
       <div class="label">World Population</div>
       <div class="value" id="popValue">0</div>
-      <div class="delta" id="popDelta">+0 people this second</div>
+      <div class="sub" id="popSub">/ sec</div>
     </div>
   </div>
 
@@ -149,7 +146,13 @@
      referenceValue: the accumulated value at referenceTime
      referenceTime:  ISO timestamp when that value was exact
      perSecond:      global (worldwide) rate per second
-   The "real" value at any instant = referenceValue + perSecond * seconds elapsed.
+
+   TABS change what the big number on every card means:
+     NOW   -> starts at 0 the instant the page loads, climbs at perSecond
+     DAY   -> total accumulated since midnight UTC (real, never resets)
+     WEEK  -> total accumulated since Monday
+     MONTH -> total accumulated since day 1 of the month
+     YEAR  -> total accumulated since Jan 1
 
    ICONS — use an emoji/character, OR a file you uploaded:
      icon: "👶"                 -> rendered as text
@@ -183,31 +186,23 @@ const CONFIG = {
 };
 /* ============================================================ */
 
-const PERIOD_LABEL = { day: "today", week: "this week", month: "this month", year: "this year" };
+const SUB_LABEL = { now: "/ sec", day: "today", week: "this week", month: "this month", year: "this year" };
 let currentPeriod = "now";
 const loadTime = Date.now();
 
 // true cumulative value at a given instant, from the stat's reference point.
-// Used ONLY for the period row (today/this week/etc) — that one reflects
-// the real world total and must never reset.
+// This is the real world total — it never resets, regardless of the tab.
 function computeValue(stat, now){
   const ref = new Date(stat.referenceTime).getTime();
   const elapsedSec = Math.max(0, (now - ref) / 1000);
   return stat.referenceValue + stat.perSecond * elapsedSec;
 }
 
-// Main counter (the big number + population): starts at exactly 0 the
-// instant the page loads, and climbs using the stat's real perSecond rate
-// from that moment on. It never jumps to or converges toward the true
-// world total — it's a fresh count that begins when the visitor arrives.
-function mainDisplayValue(stat, now){
+// NOW-mode counter: starts at exactly 0 the instant the page loads, and
+// climbs using the stat's real perSecond rate from that moment on.
+function sinceLoadValue(stat, now){
   const elapsedSec = Math.max(0, (now - loadTime) / 1000);
   return stat.perSecond * elapsedSec;
-}
-
-function formatInt(n){
-  // always floors before formatting — a rate like 1.8/sec never shows as "3.5"
-  return Math.floor(Math.max(0, n)).toLocaleString('en-US');
 }
 
 function periodStart(period, now){
@@ -222,7 +217,19 @@ function periodStart(period, now){
   }
   if (period === "month"){ d.setUTCDate(1); return d.getTime(); }
   if (period === "year"){ d.setUTCMonth(0, 1); return d.getTime(); }
-  return now; // "now" -> no accumulation window
+  return now;
+}
+
+// The single number shown on every card/population, depending on the active tab.
+function displayValue(stat, now){
+  if (currentPeriod === "now") return sinceLoadValue(stat, now);
+  const since = periodStart(currentPeriod, now);
+  return computeValue(stat, now) - computeValue(stat, since);
+}
+
+function formatInt(n){
+  // always floors before formatting — a rate like 1.8/sec never shows as "3.5"
+  return Math.floor(Math.max(0, n)).toLocaleString('en-US');
 }
 
 function iconHTML(icon){
@@ -243,16 +250,12 @@ CONFIG.stats.forEach(stat => {
     ${iconHTML(stat.icon)}
     <div class="label">${stat.label}</div>
     <div class="value" style="color:${stat.color}">0</div>
-    <div class="per">/ sec</div>
-    <div class="rule"></div>
-    <div class="period"><b>0</b> <span class="period-word">today</span></div>
+    <div class="sub">/ sec</div>
   `;
   grid.appendChild(card);
   cards[stat.id] = {
     valueEl: card.querySelector('.value'),
-    periodRow: card.querySelector('.period'),
-    periodValEl: card.querySelector('.period b'),
-    periodWordEl: card.querySelector('.period-word')
+    subEl: card.querySelector('.sub')
   };
 });
 
@@ -271,26 +274,14 @@ function render(){
   CONFIG.stats.forEach(stat => {
     const c = cards[stat.id];
     const prefix = stat.prefix || '';
-
-    // main number: 0 -> real value on load, then live thereafter
-    c.valueEl.textContent = prefix + formatInt(mainDisplayValue(stat, now));
-
-    // period row: always the true accumulated value, no intro animation
-    if (currentPeriod === "now"){
-      c.periodRow.classList.add('hidden');
-    } else {
-      const since = periodStart(currentPeriod, now);
-      const total = computeValue(stat, now) - computeValue(stat, since);
-      c.periodValEl.textContent = prefix + formatInt(total);
-      c.periodWordEl.textContent = PERIOD_LABEL[currentPeriod];
-      c.periodRow.classList.remove('hidden');
-    }
+    c.valueEl.textContent = prefix + formatInt(displayValue(stat, now));
+    c.subEl.textContent = SUB_LABEL[currentPeriod];
   });
 
-  // world population
+  // world population — same NOW/period logic as the other cards
   const pop = CONFIG.population;
-  document.getElementById('popValue').textContent = formatInt(mainDisplayValue(pop, now));
-  document.getElementById('popDelta').textContent = `+${Math.round(pop.perSecond)} people this second`;
+  document.getElementById('popValue').textContent = formatInt(displayValue(pop, now));
+  document.getElementById('popSub').textContent = SUB_LABEL[currentPeriod];
 
   // clock
   const d = new Date(now);
