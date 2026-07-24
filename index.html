@@ -186,25 +186,23 @@ const CONFIG = {
 const PERIOD_LABEL = { day: "today", week: "this week", month: "this month", year: "this year" };
 let currentPeriod = "now";
 const loadTime = Date.now();
-const ANIM_DURATION = 1800; // ms — how long the "count up from 0" intro lasts
 
-function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
-
-// true value at a given instant, from the reference point
+// true cumulative value at a given instant, from the stat's reference point.
+// Used ONLY for the period row (today/this week/etc) — that one reflects
+// the real world total and must never reset.
 function computeValue(stat, now){
   const ref = new Date(stat.referenceTime).getTime();
   const elapsedSec = Math.max(0, (now - ref) / 1000);
   return stat.referenceValue + stat.perSecond * elapsedSec;
 }
 
-// main counter: animates up from 0 on page load, then tracks the real value
+// Main counter (the big number + population): starts at exactly 0 the
+// instant the page loads, and climbs using the stat's real perSecond rate
+// from that moment on. It never jumps to or converges toward the true
+// world total — it's a fresh count that begins when the visitor arrives.
 function mainDisplayValue(stat, now){
-  const elapsed = now - loadTime;
-  if (elapsed < ANIM_DURATION){
-    const targetAtLoad = computeValue(stat, loadTime);
-    return targetAtLoad * easeOutCubic(elapsed / ANIM_DURATION);
-  }
-  return computeValue(stat, now);
+  const elapsedSec = Math.max(0, (now - loadTime) / 1000);
+  return stat.perSecond * elapsedSec;
 }
 
 function formatInt(n){
