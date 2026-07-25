@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PULSE — the world, right now</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg: #0a0d0c;
@@ -47,7 +50,7 @@
 
   .clock{
     font-variant-numeric: tabular-nums;
-    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-family: 'Space Grotesk', ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
     font-size: clamp(40px, 10vw, 76px); font-weight: 500; letter-spacing: 0.02em;
     color: var(--amber);
   }
@@ -62,11 +65,15 @@
   .population .label{ font-size:11px; letter-spacing:0.16em; color:var(--ink-dim); text-transform:uppercase; }
   .population .icon{ display:inline-block; margin: 0 0 6px; font-size:20px; }
   .population .value{
-    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-family: 'Space Grotesk', ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
     font-size: clamp(38px, 8vw, 58px); font-weight:600; color: var(--teal);
     font-variant-numeric: tabular-nums; margin: 8px 0 4px;
   }
-  .population .sub{ font-size:12px; color:var(--teal); letter-spacing:0.05em; opacity:0.85; }
+  .population .sub{ font-size:12px; color:var(--teal); letter-spacing:0.05em; opacity:0.85; min-height:16px; }
+
+  /* personal session moment */
+  .moment{ text-align:center; margin-top:18px; font-size:13px; color:var(--ink-dim); }
+  .moment b{ color:var(--ink); font-weight:600; }
 
   /* category filter row — desktop: two staggered rows */
   .categories-desktop{ display:flex; flex-direction:column; gap:14px; margin: 44px 0 40px; }
@@ -120,17 +127,48 @@
   @media (max-width: 720px){ .grid{ grid-template-columns: repeat(2, 1fr);} }
   @media (max-width: 460px){ .grid{ grid-template-columns: 1fr;} }
 
+  /* spotlight — one stat given more weight than the rest, auto-rotating or pinned */
+  .spotlight{
+    background: var(--bg-panel); border:1px solid var(--line); border-radius:14px;
+    padding: 30px 24px 26px; margin: 26px 0 20px; text-align:center; position:relative;
+  }
+  .spotlight .sp-pin{
+    position:absolute; top:14px; right:16px; font-size:10px; letter-spacing:0.12em;
+    color:var(--ink-dim); background:none; border:1px solid var(--line); border-radius:6px;
+    padding:5px 10px; cursor:pointer;
+  }
+  .spotlight .sp-pin.active{ color:var(--teal); border-color:var(--teal); }
+  .spotlight .sp-icon{ font-size:30px; display:inline-block; }
+  .spotlight .sp-icon-img{ width:32px; height:32px; object-fit:contain; display:inline-block; }
+  .spotlight .sp-label{ font-size:12px; letter-spacing:0.16em; color:var(--ink-dim); text-transform:uppercase; margin-top:8px; }
+  .spotlight .sp-value{ font-family: 'Space Grotesk', ui-monospace, monospace; font-size: clamp(46px, 9vw, 82px); font-weight:700; margin: 8px 0 2px; font-variant-numeric: tabular-nums; }
+  .spotlight .sp-sub{ font-size:12px; color:var(--ink-dim); letter-spacing:0.06em; }
+  .spotlight .sp-translate{ margin-top:10px; font-size:13px; color:var(--teal); min-height:18px; }
+
   .card{
     background: var(--bg-panel); border:1px solid var(--line); border-radius:10px;
     padding: 22px 18px 18px; position:relative; overflow:hidden;
-    text-align:center;
+    text-align:center; cursor:pointer;
   }
+  .card.flash{ animation: cardFlash 700ms ease; }
+  @keyframes cardFlash{
+    0%{ box-shadow:none; }
+    30%{ box-shadow:0 0 0 1px var(--flash-color), 0 0 26px var(--flash-color); }
+    100%{ box-shadow:none; }
+  }
+
+  #globalFlash{
+    position:fixed; inset:0; pointer-events:none; z-index:50; opacity:0;
+    background: radial-gradient(circle at 50% 12%, rgba(79,214,196,0.28), transparent 62%);
+  }
+  #globalFlash.active{ animation: globalFlashPulse 900ms ease; }
+  @keyframes globalFlashPulse{ 0%{opacity:0;} 25%{opacity:1;} 100%{opacity:0;} }
   .card .icon{ font-size:22px; line-height:1; margin-bottom:10px; display:inline-block; }
   .card .icon-img{ width:26px; height:26px; object-fit:contain; display:inline-block; margin-bottom:10px; }
   .card .label{ font-size:11px; letter-spacing:0.14em; color:var(--ink-dim); text-transform:uppercase; }
   .card .row{ display:flex; align-items:flex-end; justify-content:center; gap:12px; margin-top:10px; }
   .card .value{
-    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-family: 'Space Grotesk', ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
     font-size: clamp(28px, 6vw, 40px); font-weight:600; margin: 0 0 4px;
     font-variant-numeric: tabular-nums; text-align:left;
   }
@@ -165,7 +203,7 @@
   .trend-panel .panel-title{ justify-content:flex-start; }
   .trend-panel .trend-spark{ width:100%; height:64px; margin: 4px 0 10px; }
   .trend-panel .trend-value{
-    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-family: 'Space Grotesk', ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
     font-size: 26px; font-weight:600; color: var(--teal); font-variant-numeric: tabular-nums;
   }
   .trend-panel .trend-sub{ font-size:12px; color:var(--ink-dim); margin-top:2px; }
@@ -174,11 +212,12 @@
   .footer{ text-align:center; font-size:11px; letter-spacing:0.2em; color:var(--ink-dim); }
 
   @media (prefers-reduced-motion: reduce){
-    .live .dot, .panel-title .dot, .pulse-marker{ animation:none; }
+    .live .dot, .panel-title .dot, .pulse-marker, .card.flash, #globalFlash.active{ animation:none; }
   }
 </style>
 </head>
 <body>
+<div id="globalFlash"></div>
 <div class="wrap">
 
   <div class="head">
@@ -208,6 +247,8 @@
       <div class="value" id="popValue">0</div>
       <div class="sub" id="popSub">/ sec</div>
     </div>
+
+    <div class="moment" id="moment"></div>
   </div>
 
   <div class="categories-desktop" id="categoriesDesktop"></div>
@@ -216,6 +257,8 @@
   </div>
 
   <div class="breadcrumb" id="breadcrumb">Showing: Overview · / sec</div>
+
+  <div class="spotlight" id="spotlight"></div>
 
   <div class="grid" id="grid"></div>
 
@@ -2072,7 +2115,7 @@ const loadTime = Date.now();
 // This is the real world total — it never resets, regardless of the tab.
 function computeValue(stat, now){
   const ref = new Date(stat.referenceTime).getTime();
-  const elapsedSec = Math.max(0, (now - ref) / 1000);
+  const elapsedSec = (now - ref) / 1000;
   return stat.referenceValue + stat.perSecond * elapsedSec;
 }
 
@@ -2106,6 +2149,86 @@ function displayValue(stat, now){
 
 function formatInt(n){
   return Math.floor(Math.max(0, n)).toLocaleString('en-US');
+}
+
+/* ---- human translations: turn a raw number into something you can feel.
+   Only defined for a handful of stats where a comparison feels natural
+   (and deliberately skipped for deaths/homicides/car_crashes/etc — a
+   "that's a stadium!" framing would be tasteless for those). Add more
+   entries here any time; anything without a list here just shows its
+   normal /sec or period label instead. ---- */
+const TRANSLATIONS = {
+  population: [
+    { t: 30,    label: "a classroom" },
+    { t: 50,    label: "a school bus" },
+    { t: 180,   label: "a full flight" },
+    { t: 500,   label: "a small wedding" },
+    { t: 2000,  label: "a concert crowd" },
+    { t: 20000, label: "a packed stadium" }
+  ],
+  births: [
+    { t: 30,    label: "a classroom of new kids" },
+    { t: 180,   label: "a full flight of newborns" },
+    { t: 20000, label: "a stadium of babies" }
+  ],
+  gdp: [
+    { t: 1000000,    label: "a small startup's yearly revenue" },
+    { t: 100000000,  label: "a blockbuster's opening weekend" },
+    { t: 1000000000, label: "a unicorn's valuation" }
+  ],
+  coffee: [
+    { t: 1000,   label: "a whole coffee shop's daily sales" },
+    { t: 100000, label: "every seat in a stadium, one cup each" }
+  ],
+  trees: [
+    { t: 1000,   label: "a small forest patch" },
+    { t: 100000, label: "a football-field-sized clearing" }
+  ],
+  weddings: [
+    { t: 10,  label: "a full wedding-season morning" },
+    { t: 100, label: "an entire wedding expo" }
+  ],
+  startups: [
+    { t: 5,  label: "a whole startup-accelerator batch" },
+    { t: 50, label: "a co-working floor filling up" }
+  ]
+};
+function translateValue(id, value){
+  const list = TRANSLATIONS[id];
+  if (!list) return null;
+  let match = null;
+  for (const item of list){ if (value >= item.t) match = item; }
+  return match ? `That's like ${match.label}` : null;
+}
+
+/* ---- milestone "moments": a soft flash when a stat's session count
+   crosses a round-ish threshold, so something visibly *happens* instead
+   of everything just climbing forever. The step scales with each stat's
+   own rate so every stat gets a moment roughly every ~45s, not just the
+   fast-moving ones. ---- */
+const milestoneState = {};
+function milestoneStep(perSecond){ return Math.max(1, Math.round(perSecond * 45)); }
+function checkMilestone(id, perSecond, value, onCross){
+  const step = milestoneStep(perSecond);
+  const bucket = Math.floor(value / step);
+  if (milestoneState[id] === undefined){ milestoneState[id] = bucket; return; }
+  if (bucket > milestoneState[id]){
+    milestoneState[id] = bucket;
+    onCross();
+  }
+}
+function flashCard(el, color){
+  if (!el) return;
+  el.style.setProperty('--flash-color', color);
+  el.classList.remove('flash');
+  void el.offsetWidth; // restart the animation
+  el.classList.add('flash');
+}
+function flashGlobal(){
+  const el = document.getElementById('globalFlash');
+  el.classList.remove('active');
+  void el.offsetWidth;
+  el.classList.add('active');
 }
 
 function iconHTML(icon){
@@ -2224,7 +2347,12 @@ CONFIG.stats.forEach(stat => {
     </div>
   `;
   grid.appendChild(card);
+  card.addEventListener('click', () => {
+    spotlightPinned = (spotlightPinned === stat.id) ? null : stat.id;
+    renderSpotlight(Date.now());
+  });
   cards[stat.id] = {
+    cardEl: card,
     valueEl: card.querySelector('.value'),
     subEl: card.querySelector('.sub')
   };
@@ -2256,8 +2384,59 @@ document.getElementById('tabs').addEventListener('click', (e) => {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
   currentPeriod = btn.dataset.period;
+  Object.keys(milestoneState).forEach(k => delete milestoneState[k]); // avoid false-positive flashes from the value jump
   updateBreadcrumb();
 });
+
+/* ---- spotlight: gives one stat more visual weight than the rest.
+   Auto-rotates through whatever's currently visible (respecting the
+   category filter) every 6s, or stays on one stat if the user pins it
+   by clicking a card / the pin button. ---- */
+let spotlightPinned = null;
+let spotlightIndex = 0;
+let lastSpotlightSwitch = Date.now();
+const SPOTLIGHT_ROTATE_MS = 6000;
+
+function visibleStatIds(){
+  return CONFIG.stats
+    .filter(s => currentCategory === 'overview' ? s.overview : s.category === currentCategory)
+    .map(s => s.id);
+}
+
+function currentSpotlightStat(now){
+  const ids = visibleStatIds();
+  if (!ids.length) return null;
+  if (spotlightPinned && !ids.includes(spotlightPinned)) spotlightPinned = null;
+  if (spotlightPinned) return CONFIG.stats.find(s => s.id === spotlightPinned);
+  if (now - lastSpotlightSwitch > SPOTLIGHT_ROTATE_MS){
+    spotlightIndex = (spotlightIndex + 1) % ids.length;
+    lastSpotlightSwitch = now;
+  }
+  const id = ids[spotlightIndex % ids.length];
+  return CONFIG.stats.find(s => s.id === id);
+}
+
+function renderSpotlight(now){
+  const stat = currentSpotlightStat(now);
+  const el = document.getElementById('spotlight');
+  if (!stat){ el.innerHTML = ''; return; }
+  const prefix = stat.prefix || '';
+  const val = displayValue(stat, now);
+  const translated = translateValue(stat.id, val);
+  const pinned = spotlightPinned === stat.id;
+  el.innerHTML = `
+    <button class="sp-pin ${pinned ? 'active' : ''}" id="spPinBtn">${pinned ? '📌 PINNED' : 'PIN'}</button>
+    ${iconHTML(stat.icon).replace('class="icon"', 'class="sp-icon"').replace('class="icon-img"', 'class="sp-icon-img"')}
+    <div class="sp-label">${stat.label}</div>
+    <div class="sp-value" style="color:${stat.color}">${prefix + formatInt(val)}</div>
+    <div class="sp-sub">${SUB_LABEL[currentPeriod]}</div>
+    <div class="sp-translate">${translated || ''}</div>
+  `;
+  document.getElementById('spPinBtn').addEventListener('click', () => {
+    spotlightPinned = pinned ? null : stat.id;
+    renderSpotlight(Date.now());
+  });
+}
 
 function render(){
   const now = Date.now();
@@ -2265,13 +2444,32 @@ function render(){
   CONFIG.stats.forEach(stat => {
     const c = cards[stat.id];
     const prefix = stat.prefix || '';
-    c.valueEl.textContent = prefix + formatInt(displayValue(stat, now));
+    const val = displayValue(stat, now);
+    c.valueEl.textContent = prefix + formatInt(val);
     c.subEl.textContent = SUB_LABEL[currentPeriod];
+    checkMilestone(stat.id, stat.perSecond, val, () => flashCard(c.cardEl, stat.color));
   });
 
   const pop = CONFIG.population;
-  document.getElementById('popValue').textContent = formatInt(displayValue(pop, now));
-  document.getElementById('popSub').textContent = SUB_LABEL[currentPeriod];
+  const popVal = displayValue(pop, now);
+  document.getElementById('popValue').textContent = formatInt(popVal);
+  // alternate every 4s between the rate label and a human-scale translation, when one exists
+  const popTranslation = translateValue('population', popVal);
+  const showTranslation = popTranslation && Math.floor(now / 4000) % 2 === 1;
+  document.getElementById('popSub').textContent = showTranslation ? popTranslation : SUB_LABEL[currentPeriod];
+  checkMilestone('population', pop.perSecond, popVal, flashGlobal);
+
+  // personal, session-relative moment (not the world total — how much
+  // happened during THIS visit)
+  const birthsStat = CONFIG.stats.find(s => s.id === 'births');
+  const deathsStat = CONFIG.stats.find(s => s.id === 'deaths');
+  const sessionSec = Math.max(0, Math.floor((now - loadTime) / 1000));
+  const bornSession = formatInt(sinceLoadValue(birthsStat, now));
+  const diedSession = formatInt(sinceLoadValue(deathsStat, now));
+  document.getElementById('moment').innerHTML =
+    `You've been here <b>${sessionSec}s</b> — in that time <b>${bornSession}</b> people were born and <b>${diedSession}</b> died.`;
+
+  renderSpotlight(now);
 
   // real, live-computed 24h population delta
   const delta24h = computeValue(pop, now) - computeValue(pop, now - 24 * 3600 * 1000);
