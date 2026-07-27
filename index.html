@@ -52,7 +52,7 @@
   .hero-content{ position:relative; z-index:1; }
   /* dark halo hugging the text itself, instead of dimming the map underneath —
      keeps the map at full vibrancy everywhere, contrast lives in the glyphs */
-  .hero-content h1, .hero-content p, .hero-content .clock, .hero-content .date-row,
+  .hero-content h1, .hero-content p, .hero-content .date-row,
   .hero-content .live{
     text-shadow: 0 1px 2px rgba(0,0,0,1), 0 0 4px rgba(0,0,0,1), 0 0 10px rgba(0,0,0,0.95);
   }
@@ -63,13 +63,37 @@
   .hero p{ color:#b8c4bd; margin:0 0 40px; font-size:14px; }
 
   .clock{
+    display:flex; align-items:flex-start; justify-content:center; gap:8px;
+  }
+  .clock-unit{ display:flex; flex-direction:column; align-items:center; }
+  .clock-digits{
     font-variant-numeric: tabular-nums;
     font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-    font-size: clamp(40px, 10vw, 76px); font-weight: 500; letter-spacing: 0.02em;
+    font-size: clamp(38px, 9vw, 72px); font-weight: 600; letter-spacing: 0.04em;
     color: var(--coral);
+    background: rgba(8,10,9,0.82);
+    border: 1px solid rgba(255,107,94,0.28);
+    border-radius: 10px;
+    padding: 6px clamp(10px, 2.2vw, 20px);
+    /* LED-style glow: the digits emit light rather than just sitting on the map */
+    text-shadow: 0 0 12px rgba(255,107,94,0.55), 0 0 30px rgba(255,107,94,0.25);
+    box-shadow: inset 0 0 24px rgba(0,0,0,0.85);
+    line-height: 1.1;
   }
-  .clock .tz{ font-family: ui-monospace, 'Courier New', monospace; font-size: clamp(11px, 2.2vw, 14px); color:#b8c4bd; margin-left:10px; letter-spacing:0.1em; font-weight:500; white-space:nowrap; }
-  .date-row{ margin-top:22px; color:#b8c4bd; font-size:13px; letter-spacing:0.08em; }
+  .clock-label{
+    font-size: clamp(8px, 1.5vw, 10px); letter-spacing:0.18em; text-transform:uppercase;
+    color:#8f9c96; margin-top:8px;
+  }
+  .clock-sep{
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: clamp(30px, 7vw, 58px); font-weight:600; color: var(--coral); opacity:0.5;
+    line-height:1.35; padding: 6px 0;
+  }
+  .tz{
+    font-family: ui-monospace, 'Courier New', monospace; font-size: clamp(11px, 2.2vw, 13px);
+    color:#b8c4bd; letter-spacing:0.14em; font-weight:500; margin-top:16px;
+  }
+  .date-row{ margin-top:10px; color:#b8c4bd; font-size:13px; letter-spacing:0.08em; }
   .live{ display:inline-flex; align-items:center; gap:6px; margin-top:14px; font-size:11px; letter-spacing:0.16em; color: var(--teal); }
   .live .dot{ width:6px; height:6px; border-radius:50%; background:var(--teal); animation: blink 1.6s ease-in-out infinite; }
   @keyframes blink{ 0%,100%{opacity:1} 50%{opacity:0.25} }
@@ -82,13 +106,29 @@
   }
   .population .label{ font-size:11px; letter-spacing:0.16em; color:var(--ink-dim); text-transform:uppercase; }
   .population .icon{ display:inline-block; margin: 0 0 6px; font-size:20px; }
-  .population .value{
-    font-family: ui-monospace, 'SF Mono', 'Courier New', Consolas, monospace;
-    font-size: clamp(38px, 8vw, 58px); font-weight:600; color: var(--teal);
-    font-variant-numeric: tabular-nums; margin: 8px 0 4px;
+  /* population as individual digit tiles — same segmented-counter concept as
+     the clock above, in dark mode so it fits the theme */
+  .pop-digits{
+    display:flex; align-items:center; justify-content:center; gap:4px;
+    margin: 14px 0 10px; flex-wrap:wrap;
   }
-  .population .value.shrink-1{ font-size: clamp(28px, 6vw, 42px); }
-  .population .value.shrink-2{ font-size: clamp(22px, 5vw, 32px); }
+  .pop-digit{
+    font-family: ui-monospace, 'SF Mono', 'Courier New', Consolas, monospace;
+    font-size: clamp(26px, 5.5vw, 46px); font-weight:600; color: var(--teal);
+    font-variant-numeric: tabular-nums; line-height:1.1;
+    background: rgba(8,10,9,0.9);
+    border: 1px solid rgba(74,222,128,0.26);
+    border-radius: 8px;
+    padding: 8px clamp(6px, 1.4vw, 12px);
+    text-shadow: 0 0 12px rgba(74,222,128,0.5), 0 0 28px rgba(74,222,128,0.2);
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.85);
+    min-width: clamp(24px, 5vw, 42px); text-align:center;
+  }
+  .pop-comma{
+    font-family: ui-monospace, 'SF Mono', 'Courier New', Consolas, monospace;
+    font-size: clamp(22px, 4.5vw, 38px); color: var(--teal); opacity:0.45;
+    align-self:flex-end; padding-bottom:10px;
+  }
   .population .sub{ font-size:12px; color:var(--teal); letter-spacing:0.05em; opacity:0.85; min-height:16px; }
 
   /* category filter row — desktop: two staggered rows */
@@ -282,7 +322,23 @@
     <div class="hero-content">
       <h1>THE WORLD, RIGHT NOW.</h1>
       <p>Real-time estimates of what's happening on Earth every second.</p>
-      <div class="clock"><span id="clock">--:--:--</span><span class="tz" id="tz">UTC</span></div>
+      <div class="clock">
+        <div class="clock-unit">
+          <div class="clock-digits" id="clockH">--</div>
+          <div class="clock-label">Hours</div>
+        </div>
+        <div class="clock-sep">:</div>
+        <div class="clock-unit">
+          <div class="clock-digits" id="clockM">--</div>
+          <div class="clock-label">Minutes</div>
+        </div>
+        <div class="clock-sep">:</div>
+        <div class="clock-unit">
+          <div class="clock-digits" id="clockS">--</div>
+          <div class="clock-label">Seconds</div>
+        </div>
+      </div>
+      <div class="tz" id="tz">UTC</div>
       <div class="date-row" id="dateRow">—</div>
       <div class="live"><span class="dot"></span>LIVE</div>
     </div>
@@ -290,7 +346,7 @@
 
   <div class="population">
     <div class="label">World Population</div>
-    <div class="value" id="popValue">0</div>
+    <div class="pop-digits" id="popValue"></div>
     <div class="sub" id="popSub">/ sec</div>
   </div>
 
@@ -755,6 +811,30 @@ function formatInt(n){
 // Numbers here can range from "1" to "$2,482,310,400" — a single fixed
 // font-size either overflows on the big ones or looks tiny on the small
 // ones. This swaps in a smaller size class once the string gets long.
+// Renders the population as one dark tile per digit (commas as plain
+// separators). Rebuilds the tiles only when the number's shape changes —
+// otherwise it just swaps text content, so this stays cheap even though
+// render() runs several times a second.
+let popDigitCache = '';
+function renderPopDigits(text){
+  const container = document.getElementById('popValue');
+  if (text.length !== popDigitCache.length){
+    container.innerHTML = '';
+    for (const ch of text){
+      const el = document.createElement('div');
+      el.className = ch === ',' ? 'pop-comma' : 'pop-digit';
+      el.textContent = ch;
+      container.appendChild(el);
+    }
+  } else {
+    const children = container.children;
+    for (let i = 0; i < text.length; i++){
+      if (children[i] && children[i].textContent !== text[i]) children[i].textContent = text[i];
+    }
+  }
+  popDigitCache = text;
+}
+
 function setValueText(el, text){
   el.textContent = text;
   el.classList.remove('shrink-1', 'shrink-2');
@@ -1151,7 +1231,7 @@ function render(){
 
   const pop = CONFIG.population;
   const popVal = displayValue(pop, now);
-  setValueText(document.getElementById('popValue'), formatInt(popVal));
+  renderPopDigits(formatInt(popVal));
   // alternate every 4s between the rate label and a human-scale translation, when one exists
   const popTranslation = translateValue('population', popVal);
   const showTranslation = popTranslation && Math.floor(now / 4000) % 2 === 1;
@@ -1163,7 +1243,9 @@ function render(){
   const h = String(useUTC ? d.getUTCHours() : d.getHours()).padStart(2, '0');
   const m = String(useUTC ? d.getUTCMinutes() : d.getMinutes()).padStart(2, '0');
   const s = String(useUTC ? d.getUTCSeconds() : d.getSeconds()).padStart(2, '0');
-  document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+  document.getElementById('clockH').textContent = h;
+  document.getElementById('clockM').textContent = m;
+  document.getElementById('clockS').textContent = s;
   document.getElementById('tz').textContent = useUTC ? 'UTC' : shortTimezoneLabel();
 
   const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: useUTC ? 'UTC' : undefined };
