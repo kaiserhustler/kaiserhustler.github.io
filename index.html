@@ -47,21 +47,20 @@
   .tab.active{ color: var(--teal); border-bottom-color: var(--teal); }
   .tab:hover{ color: var(--ink); }
 
-  .hero{ text-align:center; padding: 46px 0 30px; position:relative; overflow:hidden; border-radius:14px; }
+  .hero{ text-align:center; padding: 64px 0 64px; position:relative; overflow:hidden; border-radius:14px; }
   .hero-bgmap{ position:absolute; inset:0; z-index:0; pointer-events:none; width:100%; height:100%; opacity:0.85; }
   .hero-content{ position:relative; z-index:1; }
   /* dark halo hugging the text itself, instead of dimming the map underneath —
      keeps the map at full vibrancy everywhere, contrast lives in the glyphs */
   .hero-content h1, .hero-content p, .hero-content .clock, .hero-content .date-row,
-  .hero-content .live, .hero-content .population .label, .hero-content .population .value,
-  .hero-content .population .sub{
+  .hero-content .live{
     text-shadow: 0 2px 6px rgba(0,0,0,0.95), 0 0 18px rgba(0,0,0,0.9), 0 0 36px rgba(0,0,0,0.7);
   }
   .hero h1{
-    font-size: clamp(26px, 5vw, 42px); margin: 0 0 8px; letter-spacing: 0.02em; font-weight: 700;
+    font-size: clamp(26px, 5vw, 42px); margin: 0 0 14px; letter-spacing: 0.02em; font-weight: 700;
     color: var(--teal); opacity: 0.9;
   }
-  .hero p{ color:var(--ink-dim); margin:0 0 30px; font-size:14px; }
+  .hero p{ color:var(--ink-dim); margin:0 0 40px; font-size:14px; }
 
   .clock{
     font-variant-numeric: tabular-nums;
@@ -69,14 +68,18 @@
     font-size: clamp(40px, 10vw, 76px); font-weight: 500; letter-spacing: 0.02em;
     color: var(--coral);
   }
-  .clock .tz{ font-family: ui-monospace, 'Courier New', monospace; font-size: 15px; color: var(--ink-dim); margin-left:8px; letter-spacing:0.1em; font-weight:500; }
-  .date-row{ margin-top:6px; color:var(--ink-dim); font-size:13px; letter-spacing:0.08em; }
-  .live{ display:inline-flex; align-items:center; gap:6px; margin-top:10px; font-size:11px; letter-spacing:0.16em; color: var(--teal); }
+  .clock .tz{ font-family: ui-monospace, 'Courier New', monospace; font-size: clamp(10px, 2.8vw, 15px); color: var(--ink-dim); margin-left:8px; letter-spacing:0.1em; font-weight:500; }
+  .date-row{ margin-top:22px; color:var(--ink-dim); font-size:13px; letter-spacing:0.08em; }
+  .live{ display:inline-flex; align-items:center; gap:6px; margin-top:14px; font-size:11px; letter-spacing:0.16em; color: var(--teal); }
   .live .dot{ width:6px; height:6px; border-radius:50%; background:var(--teal); animation: blink 1.6s ease-in-out infinite; }
   @keyframes blink{ 0%,100%{opacity:1} 50%{opacity:0.25} }
 
   /* population block */
-  .population{ margin-top: 34px; padding-top: 26px; border-top: 1px solid var(--line); text-align:center; }
+  .population{
+    margin-top: 0; padding: 46px 0 52px; text-align:center;
+    border-top: none;
+    background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent) top / 100% 1px no-repeat;
+  }
   .population .label{ font-size:11px; letter-spacing:0.16em; color:var(--ink-dim); text-transform:uppercase; }
   .population .icon{ display:inline-block; margin: 0 0 6px; font-size:20px; }
   .population .value{
@@ -282,13 +285,13 @@
       <div class="clock"><span id="clock">--:--:--</span><span class="tz" id="tz">UTC</span></div>
       <div class="date-row" id="dateRow">—</div>
       <div class="live"><span class="dot"></span>LIVE</div>
-
-      <div class="population">
-        <div class="label">World Population</div>
-        <div class="value" id="popValue">0</div>
-        <div class="sub" id="popSub">/ sec</div>
-      </div>
     </div>
+  </div>
+
+  <div class="population">
+    <div class="label">World Population</div>
+    <div class="value" id="popValue">0</div>
+    <div class="sub" id="popSub">/ sec</div>
   </div>
 
   <div class="categories-desktop" id="categoriesDesktop"></div>
@@ -1283,10 +1286,24 @@ const CITY_POINTS = "50.4,13.2,50.5,13.2,50.4,13.2,50.4,13.2,65.3,18,65.5,17.8,6
   if (!ctx) return;
   const MAP_W = 100, MAP_H = 50;
 
+  // Pre-render one soft glow dot once, then stamp it thousands of times via
+  // drawImage. Hard-edged arc() circles at ~1px are what were reading as
+  // "pixelated" — a soft gradient sprite blends smoothly regardless of size.
+  const SPRITE_SIZE = 32;
+  const sprite = document.createElement('canvas');
+  sprite.width = sprite.height = SPRITE_SIZE;
+  const sctx = sprite.getContext('2d');
+  const g = sctx.createRadialGradient(SPRITE_SIZE/2, SPRITE_SIZE/2, 0, SPRITE_SIZE/2, SPRITE_SIZE/2, SPRITE_SIZE/2);
+  g.addColorStop(0, 'rgba(255,204,85,1)');
+  g.addColorStop(0.4, 'rgba(255,204,85,0.6)');
+  g.addColorStop(1, 'rgba(255,204,85,0)');
+  sctx.fillStyle = g;
+  sctx.fillRect(0, 0, SPRITE_SIZE, SPRITE_SIZE);
+
   function draw(){
     const hero = canvas.parentElement;
     const w = hero.clientWidth, h = hero.clientHeight;
-    const dpr = window.devicePixelRatio || 1; // crisp on retina screens instead of blocky/pixelated
+    const dpr = Math.max(window.devicePixelRatio || 1, 2); // always render at least 2x for crispness margin
     canvas.width = w * dpr; canvas.height = h * dpr;
     canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -1303,16 +1320,15 @@ const CITY_POINTS = "50.4,13.2,50.5,13.2,50.4,13.2,50.4,13.2,65.3,18,65.5,17.8,6
     // everything else stays a dim glow instead of either a white wash or
     // near-invisible.
     ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = 'rgba(255, 204, 85, 0.28)';
-    const r = Math.max(0.5, scale * 0.065);
+    ctx.globalAlpha = 0.28;
+    const size = Math.max(1.2, scale * 0.16);
     for (let i = 0; i < CITY_POINTS.length; i += 2){
       const x = offX + CITY_POINTS[i] * scale;
       const y = offY + CITY_POINTS[i + 1] * scale;
       if (x < -5 || x > w + 5 || y < -5 || y > h + 5) continue;
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.drawImage(sprite, x - size / 2, y - size / 2, size, size);
     }
+    ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = 'source-over';
   }
 
