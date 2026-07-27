@@ -48,19 +48,19 @@
   .tab:hover{ color: var(--ink); }
 
   .hero{ text-align:center; padding: 64px 0 64px; position:relative; overflow:hidden; border-radius:14px; }
-  .hero-bgmap{ position:absolute; inset:0; z-index:0; pointer-events:none; width:100%; height:100%; opacity:0.85; }
+  .hero-bgmap{ position:absolute; inset:0; z-index:0; pointer-events:none; width:100%; height:100%; opacity:0.55; }
   .hero-content{ position:relative; z-index:1; }
   /* dark halo hugging the text itself, instead of dimming the map underneath —
      keeps the map at full vibrancy everywhere, contrast lives in the glyphs */
   .hero-content h1, .hero-content p, .hero-content .clock, .hero-content .date-row,
   .hero-content .live{
-    text-shadow: 0 2px 6px rgba(0,0,0,0.95), 0 0 18px rgba(0,0,0,0.9), 0 0 36px rgba(0,0,0,0.7);
+    text-shadow: 0 1px 2px rgba(0,0,0,1), 0 0 4px rgba(0,0,0,1), 0 0 10px rgba(0,0,0,0.95);
   }
   .hero h1{
     font-size: clamp(26px, 5vw, 42px); margin: 0 0 14px; letter-spacing: 0.02em; font-weight: 700;
     color: var(--teal); opacity: 0.9;
   }
-  .hero p{ color:var(--ink-dim); margin:0 0 40px; font-size:14px; }
+  .hero p{ color:#b8c4bd; margin:0 0 40px; font-size:14px; }
 
   .clock{
     font-variant-numeric: tabular-nums;
@@ -68,8 +68,8 @@
     font-size: clamp(40px, 10vw, 76px); font-weight: 500; letter-spacing: 0.02em;
     color: var(--coral);
   }
-  .clock .tz{ font-family: ui-monospace, 'Courier New', monospace; font-size: clamp(10px, 2.8vw, 15px); color: var(--ink-dim); margin-left:8px; letter-spacing:0.1em; font-weight:500; }
-  .date-row{ margin-top:22px; color:var(--ink-dim); font-size:13px; letter-spacing:0.08em; }
+  .clock .tz{ font-family: ui-monospace, 'Courier New', monospace; font-size: clamp(11px, 2.2vw, 14px); color:#b8c4bd; margin-left:10px; letter-spacing:0.1em; font-weight:500; white-space:nowrap; }
+  .date-row{ margin-top:22px; color:#b8c4bd; font-size:13px; letter-spacing:0.08em; }
   .live{ display:inline-flex; align-items:center; gap:6px; margin-top:14px; font-size:11px; letter-spacing:0.16em; color: var(--teal); }
   .live .dot{ width:6px; height:6px; border-radius:50%; background:var(--teal); animation: blink 1.6s ease-in-out infinite; }
   @keyframes blink{ 0%,100%{opacity:1} 50%{opacity:0.25} }
@@ -690,6 +690,17 @@ function persistVisitProgress(){
 setInterval(persistVisitProgress, 5000);
 window.addEventListener('beforeunload', persistVisitProgress);
 
+// Long IANA names ("America/Asuncion") overflow next to a 76px clock and are
+// unreadable on phones — a short GMT offset says the same thing in 6 chars.
+function shortTimezoneLabel(){
+  const offsetMin = -new Date().getTimezoneOffset();
+  const sign = offsetMin >= 0 ? '+' : '−';
+  const abs = Math.abs(offsetMin);
+  const h = Math.floor(abs / 60);
+  const m = abs % 60;
+  return `GMT${sign}${h}${m ? ':' + String(m).padStart(2, '0') : ''}`;
+}
+
 function formatDuration(totalSec){
   totalSec = Math.floor(Math.max(0, totalSec));
   const h = Math.floor(totalSec / 3600);
@@ -1153,7 +1164,7 @@ function render(){
   const m = String(useUTC ? d.getUTCMinutes() : d.getMinutes()).padStart(2, '0');
   const s = String(useUTC ? d.getUTCSeconds() : d.getSeconds()).padStart(2, '0');
   document.getElementById('clock').textContent = `${h}:${m}:${s}`;
-  document.getElementById('tz').textContent = useUTC ? 'UTC' : Intl.DateTimeFormat().resolvedOptions().timeZone;
+  document.getElementById('tz').textContent = useUTC ? 'UTC' : shortTimezoneLabel();
 
   const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: useUTC ? 'UTC' : undefined };
   document.getElementById('dateRow').textContent = d.toLocaleDateString('en-US', opts).toUpperCase();
