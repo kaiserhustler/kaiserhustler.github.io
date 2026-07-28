@@ -359,6 +359,18 @@
 
   .card .sub{ font-size:12px; color:#9fada7; letter-spacing:0.06em; text-align:center; }
   .card .translate{ font-size:11px; color:var(--teal); letter-spacing:0.02em; text-align:center; margin-top:4px; }
+  /* Grave stats get the opposite of emphasis. No glow, no speed bar, no
+     accent stripe — in a grid where everything else pulses and competes,
+     stillness is what makes them land. This is restraint, not squeamishness:
+     the numbers themselves are unflinching. */
+  .card.grave{ background:#0c0f0e; }
+  .card.grave .value{ animation:none !important; text-shadow:none !important; }
+  .card.grave .label{ color:#8b9a94; letter-spacing:0.16em; }
+  .event-line{
+    font-size:11px; color:#7c8a84; letter-spacing:0.04em; margin-top:14px;
+    font-variant-numeric: tabular-nums; min-height:14px;
+  }
+
   .rate-bar{
     width:70%; max-width:150px; height:3px; margin:12px auto 0;
     background:rgba(255,255,255,0.07); border-radius:2px; overflow:hidden;
@@ -780,9 +792,9 @@ const CONFIG = {
 
   stats: [
     { id: "births",       label: "BABIES BORN",          icon: "baby", color: "#4fd6c4", perSecond: 4.3,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity",   overview: true },
-    { id: "deaths",       label: "DEATHS",                icon: "cross",  color: "#ff6b5e", perSecond: 1.8,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality",  overview: true, flashExempt: true },
-    { id: "homicides",    label: "HOMICIDES",             icon: "skull",  color: "#b18cff", perSecond: 0.014, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime",      overview: false, flashExempt: true },
-    { id: "car_crashes",  label: "CAR CRASHES",           icon: "car",  color: "#ffb454", perSecond: 3.7,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality",  overview: false, flashExempt: true },
+    { id: "deaths",       label: "DEATHS",                icon: "cross",  color: "#ff6b5e", perSecond: 1.8,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality",  overview: true, flashExempt: true, grave: true },
+    { id: "homicides",    label: "HOMICIDES",             icon: "skull",  color: "#b18cff", perSecond: 0.014, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime",      overview: false, flashExempt: true, grave: true },
+    { id: "malnutrition_deaths",label:"DEATHS BY MALNUTRITION",icon:"plate", color: "#e0c48f", perSecond: 0.1,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true, grave: true },
     { id: "prison",       label: "PEOPLE SENT TO PRISON", icon: "handcuffs",  color: "#e8c76b", perSecond: 0.35,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime",      overview: false },
     { id: "guns",         label: "GUNS SOLD",             icon: "gun",  color: "#ff8fb0", perSecond: 2.1,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime",      overview: true },
     { id: "divorces",     label: "DIVORCES",              icon: "heartbreak",  color: "#4fd6c4", perSecond: 1.1,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity",   overview: true },
@@ -797,34 +809,34 @@ const CONFIG = {
     // would be tone-deaf on those, even as a placeholder demo number.
 
     // MORTALITY (deaths/car_crashes above are already part of this category)
-    { id: "cancer_deaths",  label: "CANCER DEATHS",         icon: "ribbon", color: "#f28fb0", perSecond: 0.29,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
-    { id: "heart_disease",  label: "HEART DISEASE DEATHS",  icon: "heart",  color: "#ff6b5e", perSecond: 0.58,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
-    { id: "stroke_deaths",  label: "STROKE DEATHS",         icon: "brain", color: "#c9a9ff", perSecond: 0.21,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
-    { id: "suicides",       label: "SUICIDES",              icon: "cross", color: "#9fb3a8", perSecond: 0.028, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
-    { id: "overdoses",      label: "DRUG OVERDOSE DEATHS",  icon: "pill", color: "#ff9d9d", perSecond: 0.033, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
-    { id: "drownings",      label: "DROWNING DEATHS",       icon: "water", color: "#7fd6f2", perSecond: 0.012, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
-    { id: "workplace_deaths",label:"WORKPLACE ACCIDENT DEATHS",icon:"vest", color: "#e0c48f", perSecond: 0.008,referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
-    { id: "hiv_deaths",     label: "DEATHS BY HIV/AIDS",    icon: "ribbon", color: "#e08fd6", perSecond: 0.02,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
-    { id: "malnutrition_deaths",label:"DEATHS BY MALNUTRITION",icon:"plate", color: "#e0c48f", perSecond: 0.1,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
+    { id: "suicides",       label: "SUICIDES",              icon: "cross", color: "#9fb3a8", perSecond: 0.028, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true, grave: true },
+    { id: "overdoses",      label: "DRUG OVERDOSE DEATHS",  icon: "pill", color: "#ff9d9d", perSecond: 0.033, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true, grave: true },
+    { id: "car_crashes",  label: "CAR CRASHES",           icon: "car",  color: "#ffb454", perSecond: 3.7,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality",  overview: false, flashExempt: true, grave: true },
+    { id: "workplace_deaths",label:"WORKPLACE ACCIDENT DEATHS",icon:"vest", color: "#e0c48f", perSecond: 0.008,referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true, grave: true },
+    { id: "drownings",      label: "DROWNING DEATHS",       icon: "water", color: "#7fd6f2", perSecond: 0.012, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true, grave: true },
+    { id: "falls_deaths", label: "DEATHS FROM FALLS", icon: "bone", color: "#e8867a", perSecond: 0.021, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true, grave: true },
+    { id: "hiv_deaths",     label: "DEATHS BY HIV/AIDS",    icon: "ribbon", color: "#e08fd6", perSecond: 0.02,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true, grave: true },
+    { id: "heart_disease",  label: "HEART DISEASE DEATHS",  icon: "heart",  color: "#ff6b5e", perSecond: 0.58,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true, grave: true },
+    { id: "cancer_deaths",  label: "CANCER DEATHS",         icon: "ribbon", color: "#f28fb0", perSecond: 0.29,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true, grave: true },
     // curious/rare causes of death — real-world "trivia" stats, deliberately
     // tiny rates so they read near-zero most of the time; that rarity is the point
+    { id: "stroke_deaths",  label: "STROKE DEATHS",         icon: "brain", color: "#c9a9ff", perSecond: 0.21,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true, grave: true },
     { id: "lightning_deaths",label:"LIGHTNING STRIKE DEATHS",icon:"bolt", color: "#ffe08a", perSecond: 0.0003,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
     { id: "shark_deaths",   label: "SHARK ATTACK DEATHS",    icon: "wave", color: "#7fd6f2", perSecond: 0.0000019,referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
     { id: "coconut_deaths", label: "DEATHS FROM FALLING COCONUTS",icon:"tree", color: "#c9986b", perSecond: 0.0000032,referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
     { id: "bee_sting_deaths",label:"BEE STING DEATHS",       icon: "bolt", color: "#ffd166", perSecond: 0.0000015,referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
     { id: "selfie_deaths",  label: "DEATHS WHILE TAKING SELFIES",icon:"camera", color: "#e0a3ff", perSecond: 0.0000009,referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
     { id: "vending_deaths", label: "DEATHS FROM VENDING MACHINES",icon:"box", color: "#9fb3a8", perSecond: 0.0000001,referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
-    { id: "falls_deaths", label: "DEATHS FROM FALLS", icon: "bone", color: "#e8867a", perSecond: 0.021, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
 
     // ILLNESS
     { id: "illness",      label: "FLU CASES REPORTED",     icon: "virus", color: "#ff9f6b", perSecond: 15,    referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
     { id: "cancer",       label: "CANCER DIAGNOSES",       icon: "ribbon", color: "#f28fb0", perSecond: 0.6,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
-    { id: "hiv",          label: "HIV INFECTIONS",         icon: "ribbon", color: "#e08fd6", perSecond: 0.04,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false, flashExempt: true },
+    { id: "hiv",          label: "HIV INFECTIONS",         icon: "ribbon", color: "#e08fd6", perSecond: 0.04,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false, flashExempt: true, grave: true },
     { id: "diabetes",     label: "DIABETES DIAGNOSES",     icon: "drop", color: "#8fc7f2", perSecond: 0.7,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
     { id: "malaria_cases",label: "MALARIA CASES",          icon: "virus", color: "#c9a9ff", perSecond: 8.0,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
     { id: "covid",        label: "COVID CASES REPORTED",   icon: "virus", color: "#ffb454", perSecond: 5.5,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
     { id: "tb_cases",     label: "TUBERCULOSIS CASES",     icon: "cloud", color: "#9fb3a8", perSecond: 0.3,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
-    { id: "malnutrition", label: "CHILDREN TREATED FOR MALNUTRITION", icon: "plate", color: "#e0c48f", perSecond: 0.6,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false, flashExempt: true },
+    { id: "malnutrition", label: "CHILDREN TREATED FOR MALNUTRITION", icon: "plate", color: "#e0c48f", perSecond: 0.6,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false, flashExempt: true, grave: true },
     { id: "asthma",       label: "ASTHMA DIAGNOSES",       icon: "cloud", color: "#a9d6ff", perSecond: 0.9,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
     { id: "hiccups",      label: "PEOPLE GET HICCUPS",     icon: "virus", color: "#ffb454", perSecond: 50,    referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
     { id: "sneezes",      label: "SNEEZES",                icon: "virus", color: "#a9d6ff", perSecond: 4000,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
@@ -838,7 +850,7 @@ const CONFIG = {
     { id: "co2",          label: "TONS OF CO2 EMITTED",     icon: "cloud", color: "#9fb3a8", perSecond: 1250,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "environment", overview: false },
     { id: "plastic",      label: "TONS OF PLASTIC WASTE",   icon: "box", color: "#ffd166", perSecond: 30,    referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "environment", overview: false },
     { id: "water_used",   label: "LITERS OF WATER USED",    icon: "drop", color: "#7fd6f2", perSecond: 15000, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "environment", overview: false },
-    { id: "species_lost", label: "SPECIES DECLARED EXTINCT",icon: "tree", color: "#e0a3ff", perSecond: 0.0004,referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "environment", overview: false, flashExempt: true },
+    { id: "species_lost", label: "SPECIES DECLARED EXTINCT",icon: "tree", color: "#e0a3ff", perSecond: 0.0004,referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "environment", overview: false, flashExempt: true, grave: true },
     { id: "ice_melted",   label: "TONS OF ARCTIC ICE MELTED",icon:"drop", color: "#a9e0ff", perSecond: 400,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "environment", overview: false },
     { id: "oil_spilled",  label: "LITERS OF OIL SPILLED",   icon: "drop", color: "#6b6b6b", perSecond: 0.6,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "environment", overview: false },
     { id: "ewaste",       label: "TONS OF E-WASTE GENERATED",icon:"screen", color: "#c9986b", perSecond: 1.8,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "environment", overview: false },
@@ -888,7 +900,7 @@ const CONFIG = {
     { id: "drug_sales",   label: "VALUE OF DRUGS SOLD",    icon: "pill", color: "#85bb65", perSecond: 15850, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: true, prefix: "$", flashExempt: true },
     { id: "cyberattacks", label: "CYBERATTACKS",           icon: "satellite", color: "#ff8fb0", perSecond: 26.0,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
     { id: "burglaries",   label: "BURGLARIES",             icon: "lock", color: "#e0a3ff", perSecond: 2.6,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
-    { id: "sexual_assault",label:"SEXUAL ASSAULTS",         icon: "cross", color: "#f2a6c9", perSecond: 0.22,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false, flashExempt: true },
+    { id: "sexual_assault",label:"SEXUAL ASSAULTS",         icon: "cross", color: "#f2a6c9", perSecond: 0.22,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false, flashExempt: true, grave: true },
     { id: "thefts",       label: "THEFTS",                 icon: "mask", color: "#ffb454", perSecond: 14.0,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
     { id: "fraud",        label: "FRAUD CASES",            icon: "mask", color: "#ff9d9d", perSecond: 8.5,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
     { id: "identity_theft",label:"IDENTITIES STOLEN",      icon: "mask", color: "#ff8fb0", perSecond: 4.5,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
@@ -1221,6 +1233,24 @@ const PEOPLE_LADDER = [
 TRANSLATIONS.population = PEOPLE_LADDER;
 TRANSLATIONS.births = PEOPLE_LADDER;
 
+// Deaths get their own ladder, worded flatly. The neutral ladder above says
+// "that's like a packed stadium" — celebratory framing that would be obscene
+// here. These state the scale and stop.
+const DEATH_LADDER = [
+  { t: 30,        label: "a full classroom of people" },
+  { t: 180,       label: "everyone on a full flight" },
+  { t: 2000,      label: "a village, gone" },
+  { t: 20000,     label: "a stadium, emptied" },
+  { t: 100000,    label: "a town the size of a small city" },
+  { t: 1000000,   label: "the entire population of a city like Miami" },
+  { t: 7000000,   label: "everyone in Paraguay" },
+  { t: 45000000,  label: "everyone in Argentina or Spain" }
+];
+TRANSLATIONS.deaths = DEATH_LADDER;
+TRANSLATIONS.malnutrition_deaths = DEATH_LADDER;
+TRANSLATIONS.homicides = DEATH_LADDER;
+TRANSLATIONS.suicides = DEATH_LADDER;
+
 TRANSLATIONS.gdp = [
   { t: 1000000,        label: "a small startup's yearly revenue" },
   { t: 100000000,      label: "a blockbuster's opening weekend" },
@@ -1526,6 +1556,7 @@ CONFIG.stats.forEach(stat => {
   card.dataset.category = stat.category;
   card.dataset.overview = stat.overview ? 'true' : 'false';
   card.style.borderTop = `2px solid ${color}`;
+  if (stat.grave) card.classList.add('grave');
   card.innerHTML = `
     <button class="pin-btn" title="Feature this stat" aria-label="Feature ${stat.label.toLowerCase()}" aria-pressed="false">☆</button>
     <span class="icon-wrap" style="color:${color}">${iconHTML(stat.icon)}</span>
@@ -1535,7 +1566,7 @@ CONFIG.stats.forEach(stat => {
         <div class="value" style="color:${color}" role="status" aria-live="off">0</div>
         <div class="sub">/ sec</div>
         <div class="translate" style="display:none"></div>
-        ${rateBarHTML(stat, color)}
+        ${stat.grave ? '<div class="event-line"></div>' : rateBarHTML(stat, color)}
       </div>
     </div>
   `;
@@ -1549,6 +1580,7 @@ CONFIG.stats.forEach(stat => {
     cardEl: card,
     valueEl: card.querySelector('.value'),
     subEl: card.querySelector('.sub'),
+    eventEl: card.querySelector('.event-line'),
     translateEl: card.querySelector('.translate')
   };
 });
@@ -1688,6 +1720,17 @@ function render(){
     else if (text.length > 9) c.valueEl.classList.add('shrink-1');
     if (c.valueEl.textContent !== text) c.valueEl.textContent = text;
     c.subEl.textContent = subLabelFor(stat);
+
+    // Grave stats read as events, not metrics. A counter climbing smoothly is
+    // a dashboard; "the last one was 12 seconds ago" is a thing that happened
+    // to someone while you sat here.
+    if (stat.grave && c.eventEl){
+      const whole = Math.floor(val);
+      const secsSinceLast = whole >= 1 ? (val - whole) / stat.perSecond : (now - loadTime) / 1000;
+      c.eventEl.textContent = whole >= 1
+        ? `last one ${secsSinceLast < 1 ? 'just now' : Math.floor(secsSinceLast) + 's ago'}`
+        : `none yet — one expected every ${formatRate(stat.perSecond).replace('1 every ', '')}`;
+    }
 
     // glow pulse only on round milestones (every 100 births, every $1B of
     // debt, etc.) — pulsing on every tick made 9 cards blink constantly
@@ -2283,7 +2326,7 @@ const RATIO_LINES = {
     ? `Since you arrived, <b>${formatInt(v.births)}</b> people were born and <b>${formatInt(v.deaths)}</b> died — about <b>${(v.births / v.deaths).toFixed(1)}</b> births for every death.`
     : null,
   mortality: (v) => v.deaths >= 1
-    ? `Since you arrived, <b>${formatInt(v.deaths)}</b> people have died worldwide — roughly one every <b>${(1 / (v.deathsRate || 1)).toFixed(1)}</b> seconds.`
+    ? `Since you arrived, <b>${formatInt(v.deaths)}</b> people died — one every <b>${(1 / (v.deathsRate || 1)).toFixed(1)}</b> seconds. <b>${formatInt(v.malnutrition_deaths)}</b> of them starved.`
     : null,
   crime: (v) => v.prison >= 1
     ? `Since you arrived, <b>${formatInt(v.prison)}</b> people were incarcerated and <b>${formatInt(v.drug_sales)}</b> dollars of drugs changed hands.`
@@ -2297,8 +2340,8 @@ const RATIO_LINES = {
   energy: (v) => v.oil >= 1
     ? `Since you arrived, the world burned through <b>${formatInt(v.oil)}</b> barrels of oil and installed <b>${formatInt(v.solar)}</b> solar panels.`
     : null,
-  food: (v) => v.coffee >= 1
-    ? `Since you arrived, <b>${formatInt(v.coffee)}</b> cups of coffee were poured and <b>${formatInt(v.food_waste)}</b> meals were thrown away.`
+  food: (v) => v.food_waste >= 1
+    ? `Since you arrived, <b>${formatInt(v.food_waste)}</b> meals were thrown away. In the same time, <b>${formatInt(v.malnutrition_deaths)}</b> people died of hunger.`
     : null,
   economy: (v) => v.gdp >= 1
     ? `Since you arrived, the world economy created <b>$${formatInt(v.gdp)}</b> and US national debt grew by <b>$${formatInt(v.us_debt)}</b>.`
@@ -2321,6 +2364,7 @@ function renderRatioLine(now){
     prison: val('prison'), drug_sales: val('drug_sales'),
     illness: val('illness'), surgeries: val('surgeries'),
     trees: val('trees'), co2: val('co2'),
+    malnutrition_deaths: val('malnutrition_deaths'),
     oil: val('oil'), solar: val('solar'),
     coffee: val('coffee'), food_waste: val('food_waste'),
     gdp: val('gdp'), us_debt: val('us_debt'),
