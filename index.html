@@ -347,6 +347,39 @@
   .fact-panel .fact-foot{ display:flex; align-items:center; justify-content:space-between; margin-top:12px; font-size:11px; color:var(--ink-dim); }
   .fact-panel .fact-next{ background:none; border:none; color:var(--teal); cursor:pointer; font-size:13px; padding:0; }
 
+  /* sources live in an overlay, not inline — keeps the page flow clean while
+     staying on the same URL (no routing, no second page, no extra domain) */
+  .modal-backdrop{
+    position:fixed; inset:0; z-index:100; background:rgba(4,6,5,0.82);
+    display:flex; align-items:center; justify-content:center; padding:24px;
+    backdrop-filter: blur(3px);
+  }
+  .modal-backdrop[hidden]{ display:none; }
+  .modal{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:14px;
+    padding:34px 32px 30px; max-width:760px; width:100%; max-height:82vh; overflow-y:auto;
+    position:relative; box-shadow:0 24px 70px rgba(0,0,0,0.75);
+  }
+  .modal-close{
+    position:absolute; top:12px; right:16px; background:none; border:none;
+    color:var(--ink-dim); font-size:26px; line-height:1; cursor:pointer; padding:4px 8px;
+  }
+  .modal-close:hover{ color:var(--ink); }
+  .about-btn{
+    background:none; border:none; color:var(--ink-dim); font:inherit;
+    font-size:11px; letter-spacing:0.2em; cursor:pointer; padding:0;
+  }
+  .about-btn:hover{ color:var(--teal); }
+
+  .sources-title{ font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink); margin-bottom:12px; }
+  .sources-note{ font-size:12.5px; line-height:1.65; color:var(--ink-dim); margin:0 0 22px; }
+  .sources-list{ list-style:none; padding:0; margin:0; display:grid; grid-template-columns:repeat(2,1fr); gap:16px 28px; }
+  @media (max-width: 720px){ .sources-list{ grid-template-columns:1fr; } }
+  .sources-list li{ font-size:12px; line-height:1.55; }
+  .sources-list a{ color:var(--teal); text-decoration:none; display:block; margin-bottom:2px; }
+  .sources-list a:hover{ text-decoration:underline; }
+  .sources-list span{ color:var(--ink-dim); }
+
   .pulse-rule{ margin: 46px 0 14px; opacity:0.7; }
   .footer{ text-align:center; font-size:11px; letter-spacing:0.2em; color:var(--ink-dim); }
 
@@ -459,8 +492,48 @@
   <svg class="pulse-rule" width="100%" height="18" viewBox="0 0 400 18" preserveAspectRatio="none">
     <path d="M0 9 H160 L172 2 L184 16 L196 9 H400" fill="none" stroke="#1e2523" stroke-width="1.5"/>
   </svg>
-  <div class="footer">EVERY SECOND COUNTS · <span class="about">ABOUT</span></div>
+  <div class="footer">EVERY SECOND COUNTS · <button class="about-btn" id="sourcesOpen">SOURCES &amp; ABOUT</button></div>
 
+</div>
+
+<div class="modal-backdrop" id="sourcesModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="sourcesHeading">
+    <button class="modal-close" id="sourcesClose" aria-label="Close">&times;</button>
+    <div class="sources-title">Sources &amp; Methodology</div>
+    <p class="sources-note">
+      Counters are not live feeds. Each stat is calculated from a published annual
+      figure divided into a per-second rate, then multiplied by the time elapsed —
+      so the numbers are modelled estimates, not measured events. Figures below are
+      being migrated to the sources listed here; anything not yet cited should be
+      treated as a placeholder.
+    </p>
+    <ul class="sources-list">
+      <li>
+        <a href="https://population.un.org/wpp/" target="_blank" rel="noopener">UN World Population Prospects</a>
+        <span>Population, births, deaths. The official UN estimates and projections, 28th edition (2024 revision), covering 237 countries.</span>
+      </li>
+      <li>
+        <a href="https://ourworldindata.org/" target="_blank" rel="noopener">Our World in Data</a>
+        <span>Health, energy, CO₂, poverty and more. Offers a public Charts API with direct CSV/JSON access.</span>
+      </li>
+      <li>
+        <a href="https://data.worldbank.org/" target="_blank" rel="noopener">World Bank Open Data</a>
+        <span>GDP, economic and development indicators. Free and open access.</span>
+      </li>
+      <li>
+        <a href="https://fiscaldata.treasury.gov/datasets/debt-to-the-penny/" target="_blank" rel="noopener">U.S. Treasury — Debt to the Penny</a>
+        <span>US national debt. Updated at the end of each business day; free REST API, no authentication required.</span>
+      </li>
+      <li>
+        <a href="https://www.who.int/data/gho" target="_blank" rel="noopener">WHO Global Health Observatory</a>
+        <span>Disease, mortality by cause, and global health indicators.</span>
+      </li>
+      <li>
+        <a href="https://dataunodc.un.org/" target="_blank" rel="noopener">UNODC Data Portal</a>
+        <span>Homicide, drugs, trafficking and criminal justice statistics.</span>
+      </li>
+    </ul>
+  </div>
 </div>
 
 <script>
@@ -1684,11 +1757,26 @@ const CITY_POINTS = "50.4,13.2,50.5,13.2,50.4,13.2,50.4,13.2,65.3,18,65.5,17.8,6
   requestAnimationFrame(frame);
 })();
 
+/* ---- sources modal: same page, same URL, no routing ---- */
+(function initSourcesModal(){
+  const modal = document.getElementById('sourcesModal');
+  const openBtn = document.getElementById('sourcesOpen');
+  const closeBtn = document.getElementById('sourcesClose');
+  if (!modal || !openBtn) return;
+  const open = () => { modal.hidden = false; document.body.style.overflow = 'hidden'; };
+  const close = () => { modal.hidden = true; document.body.style.overflow = ''; };
+  openBtn.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  modal.addEventListener('click', e => { if (e.target === modal) close(); }); // click outside
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) close(); });
+})();
+
 applyCategoryFilter();
 layoutHero();
 updateBreadcrumb();
 render();
 setInterval(render, 200); // a few updates/sec is plenty — no need for 60fps here
 </script>
+
 </body>
 </html>
