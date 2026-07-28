@@ -231,7 +231,13 @@
     transition: border-color 0.15s ease;
   }
   .cat-btn .cat-top{ display:flex; align-items:center; gap:8px; font-size:15px; }
-  .cat-btn .icon-svg{ width:17px; height:17px; margin-bottom:0; }
+  .cat-btn .icon-svg{ width:18px; height:18px; margin-bottom:0; }
+  .cat-btn .cat-icon{ display:inline-flex; align-items:center; }
+  /* icons keep their category colour even when the button is dimmed, so the
+     nav reads as a colour key for the cards below */
+  .cat-btn .cat-icon{ opacity:0.75; transition:opacity 150ms ease; }
+  .cat-btn:hover .cat-icon, .cat-btn.active .cat-icon{ opacity:1; }
+  .mtab .icon-svg{ width:15px; height:15px; vertical-align:-2px; margin-right:5px; }
   .cat-btn .cat-num{ font-size:10px; color:var(--ink-dim); letter-spacing:0.05em; }
   .cat-btn .cat-label{ display:block; margin-top:6px; font-size:11px; letter-spacing:0.1em; color:var(--ink); }
   .cat-btn.active{ border-color: var(--teal); }
@@ -353,7 +359,11 @@
 
   .card .sub{ font-size:12px; color:#9fada7; letter-spacing:0.06em; text-align:center; }
   .card .translate{ font-size:11px; color:var(--teal); letter-spacing:0.02em; text-align:center; margin-top:4px; }
-  .card .spark{ flex-shrink:0; opacity:0.9; margin-bottom: 6px; }
+  .rate-bar{
+    width:70%; max-width:150px; height:3px; margin:12px auto 0;
+    background:rgba(255,255,255,0.07); border-radius:2px; overflow:hidden;
+  }
+  .rate-bar-fill{ height:100%; border-radius:2px; opacity:0.75; }
 
   /* bottom info grid */
   .bottom-grid{ margin-top:14px; }
@@ -773,7 +783,7 @@ const CONFIG = {
     { id: "deaths",       label: "DEATHS",                icon: "cross",  color: "#ff6b5e", perSecond: 1.8,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality",  overview: true, flashExempt: true },
     { id: "homicides",    label: "HOMICIDES",             icon: "skull",  color: "#b18cff", perSecond: 0.014, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime",      overview: false, flashExempt: true },
     { id: "car_crashes",  label: "CAR CRASHES",           icon: "car",  color: "#ffb454", perSecond: 3.7,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality",  overview: false, flashExempt: true },
-    { id: "prison",       label: "PEOPLE IN PRISON",      icon: "handcuffs",  color: "#e8c76b", perSecond: 0.6,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime",      overview: false },
+    { id: "prison",       label: "PEOPLE SENT TO PRISON", icon: "handcuffs",  color: "#e8c76b", perSecond: 0.35,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime",      overview: false },
     { id: "guns",         label: "GUNS SOLD",             icon: "gun",  color: "#ff8fb0", perSecond: 2.1,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime",      overview: true },
     { id: "divorces",     label: "DIVORCES",              icon: "heartbreak",  color: "#4fd6c4", perSecond: 1.1,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity",   overview: true },
     { id: "millionaires", label: "MILLIONAIRES CREATED",  icon: "dollar",  color: "#e8c76b", perSecond: 0.3,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "economy",    overview: true },
@@ -814,7 +824,7 @@ const CONFIG = {
     { id: "malaria_cases",label: "MALARIA CASES",          icon: "virus", color: "#c9a9ff", perSecond: 8.0,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
     { id: "covid",        label: "COVID CASES REPORTED",   icon: "virus", color: "#ffb454", perSecond: 5.5,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
     { id: "tb_cases",     label: "TUBERCULOSIS CASES",     icon: "cloud", color: "#9fb3a8", perSecond: 0.3,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
-    { id: "malnutrition", label: "CHILDREN MALNOURISHED",  icon: "plate", color: "#e0c48f", perSecond: 0.5,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false, flashExempt: true },
+    { id: "malnutrition", label: "CHILDREN TREATED FOR MALNUTRITION", icon: "plate", color: "#e0c48f", perSecond: 0.6,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false, flashExempt: true },
     { id: "asthma",       label: "ASTHMA DIAGNOSES",       icon: "cloud", color: "#a9d6ff", perSecond: 0.9,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
     { id: "hiccups",      label: "PEOPLE GET HICCUPS",     icon: "virus", color: "#ffb454", perSecond: 50,    referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
     { id: "sneezes",      label: "SNEEZES",                icon: "virus", color: "#a9d6ff", perSecond: 4000,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
@@ -870,22 +880,22 @@ const CONFIG = {
     { id: "ai_prompts",   label: "AI PROMPTS SENT",        icon: "screen", color: "#a6e3c1", perSecond: 500000,referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "economy", overview: true },
     { id: "amazon_orders",label: "ONLINE ORDERS PLACED",   icon: "box", color: "#ffb454", perSecond: 5200,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "economy", overview: false },
     { id: "lottery_tickets",label:"LOTTERY TICKETS SOLD",  icon: "ticket", color: "#ffd166", perSecond: 1200,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "economy", overview: false },
-    { id: "crypto_scams", label: "CRYPTO SCAMS REPORTED",  icon: "coin", color: "#ff9d9d", perSecond: 0.5,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "economy", overview: false },
+    { id: "crypto_scams", label: "CRYPTO SCAMS",           icon: "coin", color: "#ff9d9d", perSecond: 1.4,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "economy", overview: false },
     { id: "cars_sold", label: "CARS SOLD", icon: "car", color: "#85bb65", perSecond: 2.6, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "economy", overview: false },
     { id: "ads_served", label: "ADS SERVED ONLINE", icon: "screen", color: "#85bb65", perSecond: 120000, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "economy", overview: false },
 
     // CRIME
     { id: "drug_sales",   label: "VALUE OF DRUGS SOLD",    icon: "pill", color: "#85bb65", perSecond: 15850, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: true, prefix: "$", flashExempt: true },
-    { id: "cyberattacks", label: "CYBERATTACKS REPORTED",  icon: "satellite", color: "#ff8fb0", perSecond: 8.5,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
-    { id: "burglaries",   label: "BURGLARIES",             icon: "lock", color: "#e0a3ff", perSecond: 1.4,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
-    { id: "sexual_assault",label:"SEXUAL ASSAULTS REPORTED",icon: "cross", color: "#f2a6c9", perSecond: 0.05,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false, flashExempt: true },
-    { id: "thefts",       label: "THEFTS REPORTED",        icon: "mask", color: "#ffb454", perSecond: 6.2,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
-    { id: "fraud",        label: "FRAUD CASES REPORTED",   icon: "mask", color: "#ff9d9d", perSecond: 3.4,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
+    { id: "cyberattacks", label: "CYBERATTACKS",           icon: "satellite", color: "#ff8fb0", perSecond: 26.0,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
+    { id: "burglaries",   label: "BURGLARIES",             icon: "lock", color: "#e0a3ff", perSecond: 2.6,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
+    { id: "sexual_assault",label:"SEXUAL ASSAULTS",         icon: "cross", color: "#f2a6c9", perSecond: 0.22,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false, flashExempt: true },
+    { id: "thefts",       label: "THEFTS",                 icon: "mask", color: "#ffb454", perSecond: 14.0,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
+    { id: "fraud",        label: "FRAUD CASES",            icon: "mask", color: "#ff9d9d", perSecond: 8.5,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
     { id: "identity_theft",label:"IDENTITIES STOLEN",      icon: "mask", color: "#ff8fb0", perSecond: 4.5,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
-    { id: "catfishing",   label: "CATFISHING SCAMS REPORTED",icon:"mask", color: "#c9a9ff", perSecond: 0.3,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
+    { id: "catfishing",   label: "ROMANCE SCAMS",          icon:"mask", color: "#c9a9ff", perSecond: 0.9,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
     { id: "carjackings",  label: "CARJACKINGS",            icon: "car", color: "#ffb454", perSecond: 0.4,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
     { id: "convictions",  label: "CRIMINAL CONVICTIONS",   icon: "scales", color: "#e0c48f", perSecond: 5,     referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
-    { id: "shoplifting", label: "SHOPLIFTING INCIDENTS", icon: "box", color: "#a98bc9", perSecond: 9.5, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
+    { id: "shoplifting", label: "SHOPLIFTING INCIDENTS", icon: "box", color: "#a98bc9", perSecond: 21.0, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
     { id: "counterfeit", label: "COUNTERFEIT GOODS SEIZED", icon: "mask", color: "#a98bc9", perSecond: 2.4, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
 
     // HUMANITY
@@ -896,12 +906,12 @@ const CONFIG = {
     { id: "books",        label: "BOOKS PUBLISHED",        icon: "book", color: "#ffd166", perSecond: 0.06,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
     { id: "tattoos",      label: "TATTOOS GIVEN",          icon: "pill", color: "#e0a3ff", perSecond: 4.6,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
     { id: "proposals",    label: "MARRIAGE PROPOSALS",     icon: "ring", color: "#ffc4dd", perSecond: 2.3,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
-    { id: "ghost_sightings",label:"GHOST SIGHTINGS REPORTED",icon:"ghost", color: "#c9a9ff", perSecond: 0.7,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
+    { id: "blood_donations",label:"BLOOD DONATIONS",         icon:"heart", color: "#7fa8c9", perSecond: 3.8,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
     { id: "ufo_sightings",label: "UFO SIGHTINGS REPORTED", icon: "ufo", color: "#a6e3c1", perSecond: 0.02,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
     { id: "selfies",      label: "SELFIES TAKEN",          icon: "camera", color: "#e0a3ff", perSecond: 9500,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
     { id: "haircuts",     label: "HAIRCUTS GIVEN",         icon: "scissors", color: "#ffd166", perSecond: 1800,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
     { id: "internet_users",label: "NEW INTERNET USERS",    icon: "globe", color: "#7fa8c9", perSecond: 4,     referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
-    { id: "flights", label: "PEOPLE IN THE AIR RIGHT NOW", icon: "rocket", color: "#7fa8c9", perSecond: 4.2, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false }
+    { id: "flights", label: "FLIGHTS TAKING OFF", icon: "rocket", color: "#7fa8c9", perSecond: 1.2, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false }
   ]
 };
 /* ============================================================ */
@@ -1376,43 +1386,34 @@ function iconHTML(icon){
 }
 
 
-/* ---- decorative sparkline (seeded, deterministic, drawn once) ---- */
-/* ---- sparklines, now honest. Previously these were seeded random squiggles
-   — decorative, and a small lie on a page about data. Instead each card keeps
-   a rolling 60-second buffer of its own values from this session and plots
-   that. Because the underlying rate is constant, the line is near-straight;
-   what it actually shows is how much has accumulated while you've been here,
-   which is the real story of the page. ---- */
-const SPARK_WINDOW = 60;      // seconds of history kept per stat
-const sparkHistory = {};      // id -> array of {t, v}
+/* ---- rate bar. A sparkline can't work here: every stat runs at a constant
+   rate, so the line is always the same straight climb — identical on all 108
+   cards and informationally empty. This instead compares this stat's rate to
+   the fastest one in its category on a log scale, so at a glance you can see
+   that coffee outruns weddings by orders of magnitude. That comparison is
+   real, and it differs per card. ---- */
+const CATEGORY_RATE_RANGE = {};
+CONFIG.stats.forEach(s => {
+  const r = CATEGORY_RATE_RANGE[s.category] || (CATEGORY_RATE_RANGE[s.category] = { min: Infinity, max: 0 });
+  r.min = Math.min(r.min, s.perSecond);
+  r.max = Math.max(r.max, s.perSecond);
+});
 
-function recordSparkPoint(id, value, now){
-  const buf = sparkHistory[id] || (sparkHistory[id] = []);
-  const last = buf[buf.length - 1];
-  if (last && now - last.t < 1000) return;   // one sample per second is plenty
-  buf.push({ t: now, v: value });
-  const cutoff = now - SPARK_WINDOW * 1000;
-  while (buf.length && buf[0].t < cutoff) buf.shift();
+function rateBarFraction(stat){
+  const r = CATEGORY_RATE_RANGE[stat.category];
+  if (!r || r.max === r.min) return 1;
+  // log scale between the slowest and fastest stat in this category —
+  // anchoring to the real range (not to zero) is what makes the spread visible
+  const lo = Math.log10(r.min), hi = Math.log10(r.max);
+  const v = Math.log10(stat.perSecond);
+  return Math.max(0.05, Math.min(1, (v - lo) / (hi - lo)));
 }
 
-function sparklinePoints(id, w, h){
-  const buf = sparkHistory[id];
-  if (!buf || buf.length < 2) return null;
-  const vals = buf.map(p => p.v);
-  const min = Math.min(...vals), max = Math.max(...vals);
-  const span = (max - min) || 1;
-  const tMin = buf[0].t, tSpan = (buf[buf.length - 1].t - tMin) || 1;
-  return buf.map(p => {
-    const x = ((p.t - tMin) / tSpan) * w;
-    const y = h - ((p.v - min) / span) * (h - 2) - 1;
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  }).join(' ');
-}
-
-function sparklineSVG(id, color, w, h){
-  return `<svg class="spark-svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" data-spark="${id}">
-    <polyline points="" fill="none" stroke="${color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
-  </svg>`;
+function rateBarHTML(stat, color){
+  const pct = (rateBarFraction(stat) * 100).toFixed(1);
+  return `<div class="rate-bar" title="Speed compared to the fastest stat in ${stat.category}">
+    <div class="rate-bar-fill" style="width:${pct}%; background:${color}"></div>
+  </div>`;
 }
 
 /* ---- category filter buttons: desktop (2 staggered rows) + mobile
@@ -1444,7 +1445,7 @@ CONFIG.categories.forEach((cat, i) => {
   btn.className = 'cat-btn' + (cat.id === currentCategory ? ' active' : '');
   btn.dataset.category = cat.id;
   btn.innerHTML = `
-    <div class="cat-top">${iconHTML(cat.icon)}<span class="cat-num">${cat.num}</span></div>
+    <div class="cat-top"><span class="cat-icon" style="color:${CATEGORY_COLORS[cat.id] || 'var(--teal)'}">${iconHTML(cat.icon)}</span><span class="cat-num">${cat.num}</span></div>
     <span class="cat-label">${cat.label}</span>
   `;
   btn.addEventListener('click', () => {
@@ -1534,8 +1535,8 @@ CONFIG.stats.forEach(stat => {
         <div class="value" style="color:${color}" role="status" aria-live="off">0</div>
         <div class="sub">/ sec</div>
         <div class="translate" style="display:none"></div>
+        ${rateBarHTML(stat, color)}
       </div>
-      <div class="spark">${sparklineSVG(stat.id, color, 64, 34)}</div>
     </div>
   `;
   grid.appendChild(card);
@@ -1548,7 +1549,6 @@ CONFIG.stats.forEach(stat => {
     cardEl: card,
     valueEl: card.querySelector('.value'),
     subEl: card.querySelector('.sub'),
-    sparkLine: card.querySelector('.spark-svg polyline'),
     translateEl: card.querySelector('.translate')
   };
 });
@@ -1689,12 +1689,6 @@ function render(){
     if (c.valueEl.textContent !== text) c.valueEl.textContent = text;
     c.subEl.textContent = subLabelFor(stat);
 
-    // feed the real sparkline
-    recordSparkPoint(stat.id, val, now);
-    if (c.sparkLine){
-      const pts = sparklinePoints(stat.id, 64, 34);
-      if (pts) c.sparkLine.setAttribute('points', pts);
-    }
     // glow pulse only on round milestones (every 100 births, every $1B of
     // debt, etc.) — pulsing on every tick made 9 cards blink constantly
     if (!stat.flashExempt) checkMilestone(stat.id, stat.perSecond, val, () => {
@@ -2046,98 +2040,157 @@ document.getElementById('surpriseBtn').addEventListener('click', () => {
 const SHARE_STAT_IDS = ['births', 'deaths', 'gdp', 'us_debt'];
 
 function buildShareCanvas(){
-  const W = 1080, H = 1350;                 // portrait — fits IG feed/stories
+  const W = 1080, H = 1350;                 // portrait — fits IG feed and stories
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
   const g = cv.getContext('2d');
   const now = Date.now();
 
-  g.fillStyle = '#0a0d0c';
+  const BG = '#0a0d0c', PANEL = '#101413', LINE = '#1e2523';
+  const INK = '#e8ede9', DIM = '#9fada7', TEAL = '#4ade80';
+
+  g.fillStyle = BG;
   g.fillRect(0, 0, W, H);
 
-  // City lights as a faint texture only. Same lesson as the hero map: under
-  // 'lighter' blending a high alpha blows out to white almost instantly, so
-  // this sits deliberately near the floor.
+  function roundRect(x, y, w, h, r){
+    g.beginPath();
+    if (g.roundRect) { g.roundRect(x, y, w, h, r); return; }
+    g.moveTo(x + r, y);
+    g.arcTo(x + w, y, x + w, y + h, r);
+    g.arcTo(x + w, y + h, x, y + h, r);
+    g.arcTo(x, y + h, x, y, r);
+    g.arcTo(x, y, x + w, y, r);
+    g.closePath();
+  }
+
+  // ---- hero band: the city-lights map sits behind the headline, exactly the
+  // way it sits behind the clock on the page ----
+  const HERO_H = 470;
   g.save();
+  roundRect(40, 40, W - 80, HERO_H, 20);
+  g.clip();
+  g.fillStyle = PANEL;
+  g.fillRect(40, 40, W - 80, HERO_H);
   g.globalCompositeOperation = 'lighter';
   g.fillStyle = 'rgba(255,204,85,1)';
-  const mapScale = W / 100;
+  const mScale = (W - 80) / 100 * 1.15;
+  const mOffX = 40 + ((W - 80) - 100 * mScale) / 2;
+  const mOffY = 40 + (HERO_H - 50 * mScale) / 2 + HERO_H * 0.18;
   for (let i = 0; i < CITY_POINTS.length; i += 3){
-    const x = (CITY_POINTS[i] / CITY_GRID) * mapScale;
-    const y = (CITY_POINTS[i + 1] / CITY_GRID) * mapScale + H * 0.42;
+    const x = mOffX + (CITY_POINTS[i] / CITY_GRID) * mScale;
+    const y = mOffY + (CITY_POINTS[i + 1] / CITY_GRID) * mScale;
+    if (x < 30 || x > W - 30 || y < 40 || y > 40 + HERO_H) continue;
     const wgt = CITY_POINTS[i + 2];
-    g.globalAlpha = Math.min(0.34, 0.03 + Math.log10(1 + wgt) * 0.10);
-    g.fillRect(x, y, 1.3, 1.3);
+    g.globalAlpha = Math.min(0.55, 0.05 + Math.log10(1 + wgt) * 0.10);
+    const s = 1.1 + Math.log10(1 + wgt) * 0.8;
+    g.fillRect(x, y, s, s);
   }
   g.restore();
 
   const secs = Math.max(1, Math.floor((now - loadTime) / 1000));
-
-  // header
   g.textAlign = 'center';
-  g.fillStyle = '#4ade80';
-  g.font = '700 40px ui-monospace, monospace';
-  g.fillText('PULSE', W / 2, 84);
-  g.fillStyle = '#9fada7';
-  g.font = '400 27px -apple-system, Helvetica, Arial, sans-serif';
-  g.fillText(`What the world did in the ${formatDuration(secs)} I watched`, W / 2, 132);
 
-  // world population — the headline number
-  const pop = CONFIG.population;
-  g.fillStyle = '#6f7b76';
-  g.font = '500 22px -apple-system, Helvetica, Arial, sans-serif';
-  g.fillText('WORLD POPULATION', W / 2, 214);
-  g.fillStyle = '#4ade80';
-  g.font = '700 78px ui-monospace, monospace';
-  g.fillText(formatInt(computeValue(pop, now)), W / 2, 288);
+  // brand + subtitle, mirroring the page header
+  g.fillStyle = TEAL;
+  g.font = '700 34px ui-monospace, monospace';
+  g.fillText('PULSE', W / 2, 112);
+  g.fillStyle = DIM;
+  g.font = '400 24px -apple-system, Helvetica, Arial, sans-serif';
+  g.fillText(`What the world did in the ${formatDuration(secs)} I watched`, W / 2, 154);
 
-  // divider
-  g.strokeStyle = '#1e2523';
-  g.lineWidth = 1;
-  g.beginPath(); g.moveTo(120, 340); g.lineTo(W - 120, 340); g.stroke();
+  // world population — the headline, same as the page
+  g.fillStyle = DIM;
+  g.font = '500 19px -apple-system, Helvetica, Arial, sans-serif';
+  g.fillText('WORLD POPULATION', W / 2, 268);
+  g.fillStyle = TEAL;
+  g.font = '700 72px ui-monospace, monospace';
+  g.fillText(formatInt(computeValue(CONFIG.population, now)), W / 2, 344);
+  g.fillStyle = DIM;
+  g.font = '400 20px -apple-system, Helvetica, Arial, sans-serif';
+  g.fillText(SUB_LABEL[currentPeriod] === 'so far' ? 'since I opened the page' : SUB_LABEL[currentPeriod], W / 2, 382);
 
-  // the 9 stats the viewer actually has on screen (curated or shuffled)
+  // ---- the same 9 cards the viewer has on screen, in the same order,
+  // drawn as real cards: panel, accent top border, icon, label, value ----
   const ids = visibleStatIds().slice(0, 9);
-  const cols = 3;
-  const cellW = (W - 120) / cols;
-  const startY = 430;
-  const rowH = 200;
+  const GAP = 18, MARGIN = 40;
+  const cardW = (W - MARGIN * 2 - GAP * 2) / 3;
+  const cardH = 210;
+  const gridTop = HERO_H + 90;
 
   ids.forEach((id, idx) => {
     const s = CONFIG.stats.find(st => st.id === id);
     if (!s) return;
-    const col = idx % cols, row = Math.floor(idx / cols);
-    const cx = 60 + cellW * col + cellW / 2;
-    const cy = startY + row * rowH;
+    const col = idx % 3, row = Math.floor(idx / 3);
+    const x = MARGIN + col * (cardW + GAP);
+    const y = gridTop + row * (cardH + GAP);
+    const color = statColor(s);
 
-    let val = (s.prefix || '') + formatInt(displayValue(s, now));
-    // scale the number down if it is too wide for its cell
-    let size = 46;
-    g.font = `700 ${size}px ui-monospace, monospace`;
-    while (g.measureText(val).width > cellW - 24 && size > 20){
-      size -= 2;
-      g.font = `700 ${size}px ui-monospace, monospace`;
+    g.save();
+    roundRect(x, y, cardW, cardH, 14);
+    g.fillStyle = PANEL;
+    g.fill();
+    g.strokeStyle = LINE;
+    g.lineWidth = 1;
+    g.stroke();
+    g.clip();
+    g.fillStyle = color;              // accent bar along the top, like the cards
+    g.fillRect(x, y, cardW, 3);
+    g.restore();
+
+    // icon, drawn from the same SVG path data the page uses
+    const iconPath = SVG_ICONS[s.icon];
+    if (iconPath){
+      g.save();
+      const ICON = 30;
+      g.translate(x + cardW / 2 - ICON / 2, y + 24);
+      g.scale(ICON / 24, ICON / 24);
+      g.fillStyle = color;
+      try { g.fill(new Path2D(iconPath)); } catch (e){}
+      g.restore();
     }
-    g.fillStyle = statColor(s);
-    g.fillText(val, cx, cy);
 
-    // label, wrapped to two lines if needed
-    g.fillStyle = '#9fada7';
-    g.font = '400 19px -apple-system, Helvetica, Arial, sans-serif';
-    const words = s.label.toLowerCase().split(' ');
+    g.textAlign = 'center';
+    const cx = x + cardW / 2;
+
+    // label, wrapped to two lines
+    g.fillStyle = DIM;
+    g.font = '600 15px -apple-system, Helvetica, Arial, sans-serif';
+    const words = s.label.split(' ');
     let line = '', lines = [];
     words.forEach(w => {
       const test = line ? line + ' ' + w : w;
-      if (g.measureText(test).width > cellW - 20 && line){ lines.push(line); line = w; }
+      if (g.measureText(test).width > cardW - 24 && line){ lines.push(line); line = w; }
       else line = test;
     });
     if (line) lines.push(line);
-    lines.slice(0, 2).forEach((ln, i) => g.fillText(ln, cx, cy + 34 + i * 24));
+    lines = lines.slice(0, 2);
+    lines.forEach((ln, i) => g.fillText(ln, cx, y + 84 + i * 20));
+
+    // value, auto-shrunk to fit its card
+    const val = (s.prefix || '') + formatInt(displayValue(s, now));
+    let size = 40;
+    g.font = `700 ${size}px ui-monospace, monospace`;
+    while (g.measureText(val).width > cardW - 26 && size > 15){
+      size -= 2;
+      g.font = `700 ${size}px ui-monospace, monospace`;
+    }
+    g.fillStyle = color;
+    g.fillText(val, cx, y + (lines.length > 1 ? 152 : 142));
+
+    // rate bar, same comparison the page shows
+    const barW = cardW * 0.5;
+    const barY = y + cardH - 30;
+    g.fillStyle = 'rgba(255,255,255,0.08)';
+    g.fillRect(cx - barW / 2, barY, barW, 3);
+    g.fillStyle = color;
+    g.globalAlpha = 0.75;
+    g.fillRect(cx - barW / 2, barY, barW * rateBarFraction(s), 3);
+    g.globalAlpha = 1;
   });
 
   g.fillStyle = '#6f7b76';
-  g.font = '400 22px -apple-system, Helvetica, Arial, sans-serif';
-  g.fillText('every second counts', W / 2, H - 50);
+  g.font = '400 20px -apple-system, Helvetica, Arial, sans-serif';
+  g.fillText('every second counts', W / 2, H - 44);
 
   return cv;
 }
