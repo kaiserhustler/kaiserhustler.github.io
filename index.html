@@ -219,8 +219,14 @@
   .grid{
     display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 30px;
   }
-  @media (max-width: 720px){ .grid{ grid-template-columns: repeat(2, 1fr);} }
-  @media (max-width: 460px){ .grid{ grid-template-columns: 1fr;} }
+  @media (max-width: 900px){ .grid{ grid-template-columns: repeat(2, 1fr);} }
+  /* Single column below 640px: at two columns the long labels wrapped onto
+     three lines and the big $ numbers ran out of room. */
+  @media (max-width: 640px){
+    .grid{ grid-template-columns: 1fr; }
+    .card{ padding: 18px 16px 16px; }
+    .card .label{ font-size:11px; letter-spacing:0.1em; }
+  }
 
   /* hero row — one stat given more visual weight, flanked by two smaller
      ones. Static (no auto-rotate) — click any card to make it the hero. */
@@ -274,7 +280,7 @@
     font-family: ui-monospace, 'SF Mono', 'Courier New', Consolas, monospace;
     font-weight:600; font-variant-numeric: tabular-nums;
     font-size: clamp(28px, 6vw, 40px); line-height:1.1;
-    margin: 0 0 6px; text-align:left;
+    margin: 0 0 6px; text-align:center;
     text-shadow: none; /* crisp by default — glow is a milestone event, not a permanent state */
   }
   .card .value.ticked{
@@ -293,8 +299,8 @@
   .card.hero-main .value.shrink-1{ font-size: clamp(28px, 6vw, 44px); }
   .card.hero-main .value.shrink-2{ font-size: clamp(22px, 5vw, 32px); }
 
-  .card .sub{ font-size:12px; color:#9fada7; letter-spacing:0.06em; text-align:left; }
-  .card .translate{ font-size:11px; color:var(--teal); letter-spacing:0.02em; text-align:left; margin-top:4px; max-width:180px; }
+  .card .sub{ font-size:12px; color:#9fada7; letter-spacing:0.06em; text-align:center; }
+  .card .translate{ font-size:11px; color:var(--teal); letter-spacing:0.02em; text-align:center; margin-top:4px; }
   .card .spark{ flex-shrink:0; opacity:0.9; margin-bottom: 6px; }
 
   /* bottom info grid */
@@ -325,6 +331,15 @@
   }
   .watched-panel .watched-total{ font-size:11px; color:var(--ink-dim); margin-top:8px; letter-spacing:0.03em; text-align:center; }
 
+  .grid-controls{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    margin: 0 0 14px;
+  }
+  .grid-controls .ratio-line{ margin:0; flex:1; text-align:center; }
+  .shuffle-btn{ flex-shrink:0; white-space:nowrap; }
+  @media (max-width: 640px){
+    .grid-controls{ flex-direction:column; gap:12px; }
+  }
   .ratio-line{
     text-align:center; font-size:13px; color:#9fada7; margin: 0 0 18px; min-height:18px;
   }
@@ -374,6 +389,21 @@
     font-size:11px; letter-spacing:0.2em; cursor:pointer; padding:0;
   }
   .about-btn:hover{ color:var(--teal); }
+
+  .share-modal{ max-width:460px; text-align:center; }
+  .share-preview{
+    width:100%; max-height:46vh; object-fit:contain; border-radius:10px;
+    border:1px solid var(--line); margin: 6px 0 18px; background:#0a0d0c;
+  }
+  .share-actions{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+  .share-actions button{
+    background:var(--bg); border:1px solid var(--line); color:var(--ink);
+    font:inherit; font-size:13px; padding:12px 10px; border-radius:9px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .share-actions button:hover{ border-color:var(--teal); color:var(--teal); }
+  .share-actions button.full{ grid-column:1 / -1; }
+  .share-note{ font-size:11.5px; color:var(--ink-dim); line-height:1.55; margin:16px 0 0; }
 
   .modal-divider{
     height:1px; margin: 26px 0 24px;
@@ -463,7 +493,10 @@
     <div class="hero-side" id="heroSide"></div>
   </div>
 
-  <div class="ratio-line" id="ratioLine"></div>
+  <div class="grid-controls">
+    <div class="ratio-line" id="ratioLine"></div>
+    <button class="show-more-btn shuffle-btn" id="surpriseBtn">🎲 Surprise me</button>
+  </div>
 
   <div class="grid" id="grid"></div>
 
@@ -472,7 +505,6 @@
   </div>
 
   <div class="show-more-row">
-    <button class="show-more-btn" id="surpriseBtn">🎲 Surprise me</button>
     <button class="show-more-btn" id="shareBtn">Share my visit</button>
   </div>
 
@@ -511,6 +543,16 @@
   </svg>
   <div class="footer">EVERY SECOND COUNTS · <button class="about-btn" id="sourcesOpen">SOURCES &amp; ABOUT</button></div>
 
+</div>
+
+<div class="modal-backdrop" id="shareModal" hidden>
+  <div class="modal share-modal" role="dialog" aria-modal="true">
+    <button class="modal-close" id="shareClose" aria-label="Close">&times;</button>
+    <div class="sources-title">Share your visit</div>
+    <img id="sharePreview" class="share-preview" alt="Your Pulse summary">
+    <div class="share-actions" id="shareActions"></div>
+    <p class="share-note" id="shareNote"></p>
+  </div>
 </div>
 
 <div class="modal-backdrop" id="sourcesModal" hidden>
@@ -683,6 +725,7 @@ const CONFIG = {
     { id: "bee_sting_deaths",label:"BEE STING DEATHS",       icon: "bolt", color: "#ffd166", perSecond: 0.0000015,referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
     { id: "selfie_deaths",  label: "DEATHS WHILE TAKING SELFIES",icon:"camera", color: "#e0a3ff", perSecond: 0.0000009,referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
     { id: "vending_deaths", label: "DEATHS FROM VENDING MACHINES",icon:"box", color: "#9fb3a8", perSecond: 0.0000001,referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
+    { id: "falls_deaths", label: "DEATHS FROM FALLS", icon: "bone", color: "#e8867a", perSecond: 0.021, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
 
     // ILLNESS
     { id: "illness",      label: "FLU CASES REPORTED",     icon: "virus", color: "#ff9f6b", perSecond: 15,    referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
@@ -698,6 +741,8 @@ const CONFIG = {
     { id: "sneezes",      label: "SNEEZES",                icon: "virus", color: "#a9d6ff", perSecond: 4000,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
     { id: "broken_bones", label: "BONES BROKEN",           icon: "bone", color: "#e0c48f", perSecond: 5,     referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
     { id: "wisdom_teeth", label: "WISDOM TEETH REMOVED",   icon: "bone", color: "#dcdcdc", perSecond: 1.1,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
+    { id: "antibiotics", label: "ANTIBIOTIC DOSES TAKEN", icon: "pill", color: "#e8a96b", perSecond: 1300, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
+    { id: "surgeries", label: "SURGERIES PERFORMED", icon: "cross", color: "#e8a96b", perSecond: 10.5, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
 
     // ENVIRONMENT
     { id: "trees",        label: "TREES CUT DOWN",         icon: "tree", color: "#8fd694", perSecond: 90,    referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "environment", overview: false },
@@ -747,6 +792,8 @@ const CONFIG = {
     { id: "amazon_orders",label: "ONLINE ORDERS PLACED",   icon: "box", color: "#ffb454", perSecond: 5200,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "economy", overview: false },
     { id: "lottery_tickets",label:"LOTTERY TICKETS SOLD",  icon: "ticket", color: "#ffd166", perSecond: 1200,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "economy", overview: false },
     { id: "crypto_scams", label: "CRYPTO SCAMS REPORTED",  icon: "coin", color: "#ff9d9d", perSecond: 0.5,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "economy", overview: false },
+    { id: "cars_sold", label: "CARS SOLD", icon: "car", color: "#85bb65", perSecond: 2.6, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "economy", overview: false },
+    { id: "ads_served", label: "ADS SERVED ONLINE", icon: "screen", color: "#85bb65", perSecond: 120000, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "economy", overview: false },
 
     // CRIME
     { id: "drug_sales",   label: "VALUE OF DRUGS SOLD",    icon: "pill", color: "#85bb65", perSecond: 15850, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: true, prefix: "$", flashExempt: true },
@@ -759,6 +806,8 @@ const CONFIG = {
     { id: "catfishing",   label: "CATFISHING SCAMS REPORTED",icon:"mask", color: "#c9a9ff", perSecond: 0.3,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
     { id: "carjackings",  label: "CARJACKINGS",            icon: "car", color: "#ffb454", perSecond: 0.4,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
     { id: "convictions",  label: "CRIMINAL CONVICTIONS",   icon: "scales", color: "#e0c48f", perSecond: 5,     referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
+    { id: "shoplifting", label: "SHOPLIFTING INCIDENTS", icon: "box", color: "#a98bc9", perSecond: 9.5, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
+    { id: "counterfeit", label: "COUNTERFEIT GOODS SEIZED", icon: "mask", color: "#a98bc9", perSecond: 2.4, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
 
     // HUMANITY
     { id: "weddings",     label: "WEDDINGS",               icon: "ring", color: "#ffc4dd", perSecond: 2.0,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
@@ -772,7 +821,8 @@ const CONFIG = {
     { id: "ufo_sightings",label: "UFO SIGHTINGS REPORTED", icon: "ufo", color: "#a6e3c1", perSecond: 0.02,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
     { id: "selfies",      label: "SELFIES TAKEN",          icon: "camera", color: "#e0a3ff", perSecond: 9500,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
     { id: "haircuts",     label: "HAIRCUTS GIVEN",         icon: "scissors", color: "#ffd166", perSecond: 1800,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
-    { id: "internet_users",label: "NEW INTERNET USERS",    icon: "globe", color: "#7fa8c9", perSecond: 4,     referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false }
+    { id: "internet_users",label: "NEW INTERNET USERS",    icon: "globe", color: "#7fa8c9", perSecond: 4,     referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
+    { id: "flights", label: "PEOPLE IN THE AIR RIGHT NOW", icon: "rocket", color: "#7fa8c9", perSecond: 4.2, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false }
   ]
 };
 /* ============================================================ */
@@ -1871,92 +1921,177 @@ document.getElementById('surpriseBtn').addEventListener('click', () => {
 const SHARE_STAT_IDS = ['births', 'deaths', 'gdp', 'us_debt'];
 
 function buildShareCanvas(){
-  const W = 1080, H = 1080;
+  const W = 1080, H = 1350;                 // portrait — fits IG feed/stories
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
   const g = cv.getContext('2d');
+  const now = Date.now();
 
   g.fillStyle = '#0a0d0c';
   g.fillRect(0, 0, W, H);
 
-  // reuse the real city-lights data as a backdrop, dimmed
+  // City lights as a faint texture only. Same lesson as the hero map: with
+  // ~42k overlapping points under 'lighter', a high alpha blows out to white
+  // almost instantly — this is deliberately near the floor.
   g.save();
   g.globalCompositeOperation = 'lighter';
-  g.globalAlpha = 0.22;
+  g.globalAlpha = 0.05;
   g.fillStyle = 'rgba(255,204,85,1)';
-  const scale = W / 100;
+  const mapScale = W / 100;
   for (let i = 0; i < CITY_POINTS.length; i += 2){
-    const x = CITY_POINTS[i] * scale;
-    const y = CITY_POINTS[i + 1] * scale + H * 0.30;
-    g.fillRect(x, y, 1.6, 1.6);
+    const x = CITY_POINTS[i] * mapScale;
+    const y = CITY_POINTS[i + 1] * mapScale + H * 0.42;
+    g.fillRect(x, y, 1.1, 1.1);
   }
   g.restore();
 
-  const now = Date.now();
   const secs = Math.max(1, Math.floor((now - loadTime) / 1000));
 
+  // header
   g.textAlign = 'center';
   g.fillStyle = '#4ade80';
-  g.font = '700 46px ui-monospace, monospace';
-  g.fillText('PULSE', W / 2, 110);
-
+  g.font = '700 40px ui-monospace, monospace';
+  g.fillText('PULSE', W / 2, 84);
   g.fillStyle = '#9fada7';
-  g.font = '400 30px -apple-system, Helvetica, Arial, sans-serif';
-  g.fillText(`In the ${formatDuration(secs)} I spent watching,`, W / 2, 190);
-  g.fillText('the world produced:', W / 2, 232);
+  g.font = '400 27px -apple-system, Helvetica, Arial, sans-serif';
+  g.fillText(`What the world did in the ${formatDuration(secs)} I watched`, W / 2, 132);
 
-  let y = 350;
-  SHARE_STAT_IDS.forEach(id => {
+  // world population — the headline number
+  const pop = CONFIG.population;
+  g.fillStyle = '#6f7b76';
+  g.font = '500 22px -apple-system, Helvetica, Arial, sans-serif';
+  g.fillText('WORLD POPULATION', W / 2, 214);
+  g.fillStyle = '#4ade80';
+  g.font = '700 78px ui-monospace, monospace';
+  g.fillText(formatInt(computeValue(pop, now)), W / 2, 288);
+
+  // divider
+  g.strokeStyle = '#1e2523';
+  g.lineWidth = 1;
+  g.beginPath(); g.moveTo(120, 340); g.lineTo(W - 120, 340); g.stroke();
+
+  // the 9 stats the viewer actually has on screen (curated or shuffled)
+  const ids = visibleStatIds().slice(0, 9);
+  const cols = 3;
+  const cellW = (W - 120) / cols;
+  const startY = 430;
+  const rowH = 200;
+
+  ids.forEach((id, idx) => {
     const s = CONFIG.stats.find(st => st.id === id);
     if (!s) return;
-    const val = (s.prefix || '') + formatInt(sinceLoadValue(s, now));
+    const col = idx % cols, row = Math.floor(idx / cols);
+    const cx = 60 + cellW * col + cellW / 2;
+    const cy = startY + row * rowH;
+
+    let val = (s.prefix || '') + formatInt(displayValue(s, now));
+    // scale the number down if it is too wide for its cell
+    let size = 46;
+    g.font = `700 ${size}px ui-monospace, monospace`;
+    while (g.measureText(val).width > cellW - 24 && size > 20){
+      size -= 2;
+      g.font = `700 ${size}px ui-monospace, monospace`;
+    }
     g.fillStyle = statColor(s);
-    g.font = '700 76px ui-monospace, monospace';
-    g.fillText(val, W / 2, y);
+    g.fillText(val, cx, cy);
+
+    // label, wrapped to two lines if needed
     g.fillStyle = '#9fada7';
-    g.font = '400 26px -apple-system, Helvetica, Arial, sans-serif';
-    g.fillText(s.label.toLowerCase(), W / 2, y + 40);
-    y += 165;
+    g.font = '400 19px -apple-system, Helvetica, Arial, sans-serif';
+    const words = s.label.toLowerCase().split(' ');
+    let line = '', lines = [];
+    words.forEach(w => {
+      const test = line ? line + ' ' + w : w;
+      if (g.measureText(test).width > cellW - 20 && line){ lines.push(line); line = w; }
+      else line = test;
+    });
+    if (line) lines.push(line);
+    lines.slice(0, 2).forEach((ln, i) => g.fillText(ln, cx, cy + 34 + i * 24));
   });
 
   g.fillStyle = '#6f7b76';
-  g.font = '400 24px -apple-system, Helvetica, Arial, sans-serif';
-  g.fillText('every second counts', W / 2, H - 60);
+  g.font = '400 22px -apple-system, Helvetica, Arial, sans-serif';
+  g.fillText('every second counts', W / 2, H - 50);
 
   return cv;
 }
 
-document.getElementById('shareBtn').addEventListener('click', async () => {
-  const btn = document.getElementById('shareBtn');
+/* Opens a share sheet with explicit destinations. Note on platforms: WhatsApp,
+   X and Telegram accept a URL scheme with prefilled text, so those open
+   directly. Instagram has no web API for posting — the only honest path is
+   "save the image, then post it", which is what the button does. */
+const shareModal = document.getElementById('shareModal');
+let shareBlob = null, shareText = '';
+
+function buildShareText(){
   const now = Date.now();
   const secs = Math.max(1, Math.floor((now - loadTime) / 1000));
-  const text = `In the ${formatDuration(secs)} I spent on Pulse, the world produced:\n` +
-    SHARE_STAT_IDS.map(id => CONFIG.stats.find(s => s.id === id)).filter(Boolean)
-      .map(s => `• ${(s.prefix || '')}${formatInt(sinceLoadValue(s, now))} ${s.label.toLowerCase()}`)
-      .join('\n');
+  const ids = visibleStatIds().slice(0, 4);
+  const lines = ids.map(id => CONFIG.stats.find(s => s.id === id)).filter(Boolean)
+    .map(s => `${(s.prefix || '')}${formatInt(displayValue(s, now))} ${s.label.toLowerCase()}`);
+  return `In the ${formatDuration(secs)} I spent on Pulse, the world produced:\n` +
+         lines.map(l => `• ${l}`).join('\n');
+}
 
-  try {
-    const canvas = buildShareCanvas();
-    const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
-    const file = new File([blob], 'pulse.png', { type: 'image/png' });
+function downloadShareImage(){
+  if (!shareBlob) return;
+  const url = URL.createObjectURL(shareBlob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'pulse.png';
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
-    if (navigator.canShare && navigator.canShare({ files: [file] })){
-      await navigator.share({ files: [file], text });   // native share sheet
-      return;
-    }
-    // no share sheet (most desktops): download the image instead
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'pulse.png';
-    a.click();
-    URL.revokeObjectURL(url);
-    btn.textContent = '✓ Image saved';
-  } catch (e){
-    try { await navigator.clipboard.writeText(text); btn.textContent = '✓ Copied'; }
-    catch (e2){ btn.textContent = 'Share failed'; }
+function renderShareActions(){
+  const wrap = document.getElementById('shareActions');
+  const note = document.getElementById('shareNote');
+  wrap.innerHTML = '';
+  const enc = encodeURIComponent(shareText);
+  const add = (label, fn, full) => {
+    const b = document.createElement('button');
+    b.textContent = label;
+    if (full) b.className = 'full';
+    b.addEventListener('click', fn);
+    wrap.appendChild(b);
+  };
+
+  const canShareFiles = navigator.canShare && shareBlob &&
+    navigator.canShare({ files: [new File([shareBlob], 'pulse.png', { type: 'image/png' })] });
+
+  if (canShareFiles){
+    add('📤  Share…', async () => {
+      const file = new File([shareBlob], 'pulse.png', { type: 'image/png' });
+      try { await navigator.share({ files: [file], text: shareText }); } catch (e) {}
+    }, true);
   }
-  setTimeout(() => { btn.textContent = 'Share my visit'; }, 2200);
+  add('💬  WhatsApp', () => window.open('https://wa.me/?text=' + enc, '_blank', 'noopener'));
+  add('𝕏  Post', () => window.open('https://twitter.com/intent/tweet?text=' + enc, '_blank', 'noopener'));
+  add('⬇️  Save image', downloadShareImage);
+  add('📋  Copy text', async () => {
+    try { await navigator.clipboard.writeText(shareText); } catch (e) {}
+  });
+
+  note.textContent = canShareFiles
+    ? 'For Instagram: save the image, then post it — Instagram doesn\u2019t allow posting directly from a website.'
+    : 'Text links open with your summary prefilled. For Instagram, save the image and post it manually — Instagram has no web posting API.';
+}
+
+document.getElementById('shareBtn').addEventListener('click', async () => {
+  const canvas = buildShareCanvas();
+  shareText = buildShareText();
+  document.getElementById('sharePreview').src = canvas.toDataURL('image/png');
+  shareBlob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+  renderShareActions();
+  shareModal.hidden = false;
+  document.body.style.overflow = 'hidden';
 });
+
+(function initShareModal(){
+  const close = () => { shareModal.hidden = true; document.body.style.overflow = ''; };
+  document.getElementById('shareClose').addEventListener('click', close);
+  shareModal.addEventListener('click', e => { if (e.target === shareModal) close(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !shareModal.hidden) close(); });
+})();
 
 /* ---- ratio line: relationships between counters land harder than any single
    counter on its own. ---- */
