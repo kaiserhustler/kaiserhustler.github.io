@@ -268,7 +268,7 @@
   .card .icon-svg{ width:26px; height:26px; display:inline-block; margin-bottom:10px; vertical-align:middle; }
   .card.hero-main .icon-svg{ width:34px; height:34px; }
   .card .icon-img{ width:26px; height:26px; object-fit:contain; display:inline-block; margin-bottom:10px; }
-  .card .label{ font-size:11px; letter-spacing:0.14em; color:var(--ink-dim); text-transform:uppercase; }
+  .card .label{ font-size:11.5px; letter-spacing:0.14em; color:#9fada7; text-transform:uppercase; }
   .card .row{ display:flex; align-items:flex-end; justify-content:center; gap:12px; margin-top:10px; }
   .card .value{
     font-family: ui-monospace, 'SF Mono', 'Courier New', Consolas, monospace;
@@ -293,7 +293,7 @@
   .card.hero-main .value.shrink-1{ font-size: clamp(28px, 6vw, 44px); }
   .card.hero-main .value.shrink-2{ font-size: clamp(22px, 5vw, 32px); }
 
-  .card .sub{ font-size:12px; color:var(--ink-dim); letter-spacing:0.06em; text-align:left; }
+  .card .sub{ font-size:12px; color:#9fada7; letter-spacing:0.06em; text-align:left; }
   .card .translate{ font-size:11px; color:var(--teal); letter-spacing:0.02em; text-align:left; margin-top:4px; max-width:180px; }
   .card .spark{ flex-shrink:0; opacity:0.9; margin-bottom: 6px; }
 
@@ -325,7 +325,11 @@
   }
   .watched-panel .watched-total{ font-size:11px; color:var(--ink-dim); margin-top:8px; letter-spacing:0.03em; text-align:center; }
 
-  .show-more-row{ text-align:center; margin: 6px 0 14px; }
+  .ratio-line{
+    text-align:center; font-size:13px; color:#9fada7; margin: 0 0 18px; min-height:18px;
+  }
+  .ratio-line b{ color:var(--teal); font-weight:600; }
+  .show-more-row{ text-align:center; margin: 6px 0 14px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
   .show-more-btn{
     background:none; border:1px solid var(--line); color:var(--ink-dim); font:inherit;
     font-size:12px; letter-spacing:0.06em; padding:8px 20px; border-radius:8px; cursor:pointer;
@@ -459,10 +463,17 @@
     <div class="hero-side" id="heroSide"></div>
   </div>
 
+  <div class="ratio-line" id="ratioLine"></div>
+
   <div class="grid" id="grid"></div>
 
   <div class="show-more-row" id="showMoreRow" style="display:none;">
     <button class="show-more-btn" id="showMoreBtn">Show all</button>
+  </div>
+
+  <div class="show-more-row">
+    <button class="show-more-btn" id="surpriseBtn">🎲 Surprise me</button>
+    <button class="show-more-btn" id="shareBtn">Share my visit</button>
   </div>
 
   <div class="bottom-grid">
@@ -1237,33 +1248,41 @@ function iconHTML(icon){
 
 
 /* ---- decorative sparkline (seeded, deterministic, drawn once) ---- */
-function seededRandom(seed){
-  let s = seed % 2147483647;
-  if (s <= 0) s += 2147483646;
-  return function(){
-    s = (s * 16807) % 2147483647;
-    return (s - 1) / 2147483646;
-  };
+/* ---- sparklines, now honest. Previously these were seeded random squiggles
+   — decorative, and a small lie on a page about data. Instead each card keeps
+   a rolling 60-second buffer of its own values from this session and plots
+   that. Because the underlying rate is constant, the line is near-straight;
+   what it actually shows is how much has accumulated while you've been here,
+   which is the real story of the page. ---- */
+const SPARK_WINDOW = 60;      // seconds of history kept per stat
+const sparkHistory = {};      // id -> array of {t, v}
+
+function recordSparkPoint(id, value, now){
+  const buf = sparkHistory[id] || (sparkHistory[id] = []);
+  const last = buf[buf.length - 1];
+  if (last && now - last.t < 1000) return;   // one sample per second is plenty
+  buf.push({ t: now, v: value });
+  const cutoff = now - SPARK_WINDOW * 1000;
+  while (buf.length && buf[0].t < cutoff) buf.shift();
 }
-function hashStr(str){
-  let h = 0;
-  for (let i = 0; i < str.length; i++){ h = (h * 31 + str.charCodeAt(i)) | 0; }
-  return Math.abs(h) || 1;
+
+function sparklinePoints(id, w, h){
+  const buf = sparkHistory[id];
+  if (!buf || buf.length < 2) return null;
+  const vals = buf.map(p => p.v);
+  const min = Math.min(...vals), max = Math.max(...vals);
+  const span = (max - min) || 1;
+  const tMin = buf[0].t, tSpan = (buf[buf.length - 1].t - tMin) || 1;
+  return buf.map(p => {
+    const x = ((p.t - tMin) / tSpan) * w;
+    const y = h - ((p.v - min) / span) * (h - 2) - 1;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
 }
+
 function sparklineSVG(id, color, w, h){
-  const rand = seededRandom(hashStr(id));
-  const points = 14;
-  const pts = [];
-  for (let i = 0; i < points; i++){
-    const trend = i / (points - 1);           // gentle upward slope
-    const noise = (rand() - 0.5) * 0.35;       // seeded wiggle
-    const yNorm = Math.min(1, Math.max(0, trend * 0.75 + noise + 0.15));
-    const x = (i / (points - 1)) * w;
-    const y = h - yNorm * h;
-    pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
-  }
-  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-    <polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+  return `<svg class="spark-svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" data-spark="${id}">
+    <polyline points="" fill="none" stroke="${color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
   </svg>`;
 }
 
@@ -1298,7 +1317,11 @@ CONFIG.categories.forEach((cat, i) => {
     <div class="cat-top">${iconHTML(cat.icon)}<span class="cat-num">${cat.num}</span></div>
     <span class="cat-label">${cat.label}</span>
   `;
-  btn.addEventListener('click', () => setCategory(cat.id));
+  btn.addEventListener('click', () => {
+    shuffledOverviewIds = null;   // manual navigation clears a shuffle
+    document.getElementById('surpriseBtn').textContent = '🎲 Surprise me';
+    setCategory(cat.id);
+  });
   (i < 5 ? row1 : row2).appendChild(btn);
 
   // mobile pill
@@ -1395,6 +1418,7 @@ CONFIG.stats.forEach(stat => {
     cardEl: card,
     valueEl: card.querySelector('.value'),
     subEl: card.querySelector('.sub'),
+    sparkLine: card.querySelector('.spark-svg polyline'),
     translateEl: card.querySelector('.translate')
   };
 });
@@ -1449,7 +1473,24 @@ function interleaveByCategory(list){
   return result;
 }
 
+// When shuffled, Overview stops showing the 9 curated stats and instead draws
+// 9 at random from the whole catalogue — the point is to surface the ~90 stats
+// nobody ever scrolls to (falling coconuts, UFO sightings, hiccups).
+let shuffledOverviewIds = null;
+
+function shuffleOverview(){
+  const pool = [...CONFIG.stats];
+  for (let i = pool.length - 1; i > 0; i--){       // Fisher-Yates
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  shuffledOverviewIds = pool.slice(0, 9).map(s => s.id);
+}
+
 function orderedStatsFor(category){
+  if (category === 'overview' && shuffledOverviewIds){
+    return shuffledOverviewIds.map(id => CONFIG.stats.find(s => s.id === id)).filter(Boolean);
+  }
   const list = category === 'overview'
     ? CONFIG.stats.filter(s => s.overview)
     : CONFIG.stats.filter(s => s.category === category);
@@ -1500,6 +1541,7 @@ function layoutHero(){
 function render(){
   const now = Date.now();
   renderRecap(now);
+  renderRatioLine(now);
 
   CONFIG.stats.forEach(stat => {
     const c = cards[stat.id];
@@ -1515,6 +1557,13 @@ function render(){
     else if (text.length > 9) c.valueEl.classList.add('shrink-1');
     if (c.valueEl.textContent !== text) c.valueEl.textContent = text;
     c.subEl.textContent = subLabelFor(stat);
+
+    // feed the real sparkline
+    recordSparkPoint(stat.id, val, now);
+    if (c.sparkLine){
+      const pts = sparklinePoints(stat.id, 64, 34);
+      if (pts) c.sparkLine.setAttribute('points', pts);
+    }
     // glow pulse only on round milestones (every 100 births, every $1B of
     // debt, etc.) — pulsing on every tick made 9 cards blink constantly
     if (!stat.flashExempt) checkMilestone(stat.id, stat.perSecond, val, () => {
@@ -1801,6 +1850,128 @@ const CITY_POINTS = "50.4,13.2,50.5,13.2,50.4,13.2,50.4,13.2,65.3,18,65.5,17.8,6
   modal.addEventListener('click', e => { if (e.target === modal) close(); }); // click outside
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) close(); });
 })();
+
+/* ---- surprise me: 100 stats exist but only 9 are on the front page, so most
+   of the interesting ones (falling coconuts, UFO sightings) are never seen.
+   This reshuffles Overview with 9 random picks from every category, without
+   navigating away. ---- */
+document.getElementById('surpriseBtn').addEventListener('click', () => {
+  shuffleOverview();
+  pinnedStatId = null;          // let the new first stat take the hero slot
+  categoryExpanded = false;
+  setCategory('overview');
+  const btn = document.getElementById('surpriseBtn');
+  btn.textContent = '🎲 Shuffle again';
+});
+
+/* ---- share. Plain text in a clipboard rarely gets posted; an image does.
+   This paints the session recap onto a canvas and hands it to the OS share
+   sheet (Web Share API, which on phones offers WhatsApp/IG/X directly).
+   Falls back to downloading the PNG, then to copying text. ---- */
+const SHARE_STAT_IDS = ['births', 'deaths', 'gdp', 'us_debt'];
+
+function buildShareCanvas(){
+  const W = 1080, H = 1080;
+  const cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const g = cv.getContext('2d');
+
+  g.fillStyle = '#0a0d0c';
+  g.fillRect(0, 0, W, H);
+
+  // reuse the real city-lights data as a backdrop, dimmed
+  g.save();
+  g.globalCompositeOperation = 'lighter';
+  g.globalAlpha = 0.22;
+  g.fillStyle = 'rgba(255,204,85,1)';
+  const scale = W / 100;
+  for (let i = 0; i < CITY_POINTS.length; i += 2){
+    const x = CITY_POINTS[i] * scale;
+    const y = CITY_POINTS[i + 1] * scale + H * 0.30;
+    g.fillRect(x, y, 1.6, 1.6);
+  }
+  g.restore();
+
+  const now = Date.now();
+  const secs = Math.max(1, Math.floor((now - loadTime) / 1000));
+
+  g.textAlign = 'center';
+  g.fillStyle = '#4ade80';
+  g.font = '700 46px ui-monospace, monospace';
+  g.fillText('PULSE', W / 2, 110);
+
+  g.fillStyle = '#9fada7';
+  g.font = '400 30px -apple-system, Helvetica, Arial, sans-serif';
+  g.fillText(`In the ${formatDuration(secs)} I spent watching,`, W / 2, 190);
+  g.fillText('the world produced:', W / 2, 232);
+
+  let y = 350;
+  SHARE_STAT_IDS.forEach(id => {
+    const s = CONFIG.stats.find(st => st.id === id);
+    if (!s) return;
+    const val = (s.prefix || '') + formatInt(sinceLoadValue(s, now));
+    g.fillStyle = statColor(s);
+    g.font = '700 76px ui-monospace, monospace';
+    g.fillText(val, W / 2, y);
+    g.fillStyle = '#9fada7';
+    g.font = '400 26px -apple-system, Helvetica, Arial, sans-serif';
+    g.fillText(s.label.toLowerCase(), W / 2, y + 40);
+    y += 165;
+  });
+
+  g.fillStyle = '#6f7b76';
+  g.font = '400 24px -apple-system, Helvetica, Arial, sans-serif';
+  g.fillText('every second counts', W / 2, H - 60);
+
+  return cv;
+}
+
+document.getElementById('shareBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('shareBtn');
+  const now = Date.now();
+  const secs = Math.max(1, Math.floor((now - loadTime) / 1000));
+  const text = `In the ${formatDuration(secs)} I spent on Pulse, the world produced:\n` +
+    SHARE_STAT_IDS.map(id => CONFIG.stats.find(s => s.id === id)).filter(Boolean)
+      .map(s => `• ${(s.prefix || '')}${formatInt(sinceLoadValue(s, now))} ${s.label.toLowerCase()}`)
+      .join('\n');
+
+  try {
+    const canvas = buildShareCanvas();
+    const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+    const file = new File([blob], 'pulse.png', { type: 'image/png' });
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })){
+      await navigator.share({ files: [file], text });   // native share sheet
+      return;
+    }
+    // no share sheet (most desktops): download the image instead
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'pulse.png';
+    a.click();
+    URL.revokeObjectURL(url);
+    btn.textContent = '✓ Image saved';
+  } catch (e){
+    try { await navigator.clipboard.writeText(text); btn.textContent = '✓ Copied'; }
+    catch (e2){ btn.textContent = 'Share failed'; }
+  }
+  setTimeout(() => { btn.textContent = 'Share my visit'; }, 2200);
+});
+
+/* ---- ratio line: relationships between counters land harder than any single
+   counter on its own. ---- */
+function renderRatioLine(now){
+  const births = CONFIG.stats.find(s => s.id === 'births');
+  const deaths = CONFIG.stats.find(s => s.id === 'deaths');
+  if (!births || !deaths) return;
+  const b = sinceLoadValue(births, now);
+  const d = sinceLoadValue(deaths, now);
+  const el = document.getElementById('ratioLine');
+  if (d < 1 || b < 1){ el.textContent = ''; return; }
+  const ratio = (b / d).toFixed(1);
+  el.innerHTML = `Since you arrived, <b>${formatInt(b)}</b> people were born and ` +
+                 `<b>${formatInt(d)}</b> died — about <b>${ratio}</b> births for every death.`;
+}
 
 applyCategoryFilter();
 layoutHero();
