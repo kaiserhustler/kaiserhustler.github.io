@@ -371,6 +371,12 @@
   }
   .about-btn:hover{ color:var(--teal); }
 
+  .modal-divider{
+    height:1px; margin: 26px 0 24px;
+    background: linear-gradient(to right, transparent, var(--line) 20%, var(--line) 80%, transparent);
+  }
+  .sources-note a{ color:var(--teal); text-decoration:none; }
+  .sources-note a:hover{ text-decoration:underline; }
   .sources-title{ font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink); margin-bottom:12px; }
   .sources-note{ font-size:12.5px; line-height:1.65; color:var(--ink-dim); margin:0 0 22px; }
   .sources-list{ list-style:none; padding:0; margin:0; display:grid; grid-template-columns:repeat(2,1fr); gap:16px 28px; }
@@ -499,6 +505,31 @@
 <div class="modal-backdrop" id="sourcesModal" hidden>
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="sourcesHeading">
     <button class="modal-close" id="sourcesClose" aria-label="Close">&times;</button>
+    <div class="sources-title">About</div>
+    <p class="sources-note">
+      Pulse is a running estimate of what happens on Earth while you're reading this.
+      Every counter starts at zero the moment the page loads.
+    </p>
+    <p class="sources-note">
+      I built it because I missed the old Poodwaddle world clock. It doesn't exist
+      anymore, and I used to lose hours to it — there was something about watching
+      the world tick over in real time that I've never found anywhere else. This is
+      my attempt at that feeling. No agenda, no mission statement. Pure curiosity
+      and self-indulgence.
+    </p>
+    <p class="sources-note">
+      Global numbers are usually published as annual totals — 67 million deaths a
+      year, billions of tons of CO₂. Those figures are too big to feel. Split into
+      seconds and tied to the time you've actually spent on this page, they turn
+      into something you can sense.
+    </p>
+    <p class="sources-note">
+      Built by Cesar, in Paraguay —
+      <a href="mailto:cesar@cesarcovarrubias.com">cesar@cesarcovarrubias.com</a>
+    </p>
+
+    <div class="modal-divider"></div>
+
     <div class="sources-title">Sources &amp; Methodology</div>
     <p class="sources-note">
       Counters are not live feeds. Each stat is calculated from a published annual
