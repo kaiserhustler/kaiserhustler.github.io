@@ -108,28 +108,66 @@
   .population .icon{ display:inline-block; margin: 0 0 6px; font-size:20px; }
   /* population as individual digit tiles — same segmented-counter concept as
      the clock above, in dark mode so it fits the theme */
+  /* ---- shared digit-tile system ----
+     One tile per digit, used by the population counter and every stat card.
+     Tiles inherit their color from the parent (set per-category on cards),
+     so the same component reads as green here and coral/plum/gold elsewhere. */
+  .digit-tiles{
+    display:flex; align-items:center; justify-content:center; gap:3px;
+    flex-wrap:wrap;
+  }
+  .digit-tile{
+    font-family: ui-monospace, 'SF Mono', 'Courier New', Consolas, monospace;
+    font-weight:600; font-variant-numeric: tabular-nums; line-height:1.1;
+    color: inherit;
+    background: rgba(8,10,9,0.9);
+    border: 1px solid currentColor;
+    border-radius: 6px;
+    padding: 4px 6px;
+    box-shadow: inset 0 0 14px rgba(0,0,0,0.85);
+    text-align:center;
+  }
+  .digit-sep{
+    font-family: ui-monospace, 'SF Mono', 'Courier New', Consolas, monospace;
+    color: inherit; opacity:0.5; align-self:flex-end; padding-bottom:4px;
+  }
+
+  /* population: the largest tiles on the page */
   .pop-digits{
     display:flex; align-items:center; justify-content:center; gap:4px;
-    margin: 14px 0 10px; flex-wrap:wrap;
+    margin: 14px 0 10px; flex-wrap:wrap; color: var(--teal);
   }
-  .pop-digit{
-    font-family: ui-monospace, 'SF Mono', 'Courier New', Consolas, monospace;
-    font-size: clamp(26px, 5.5vw, 46px); font-weight:600; color: var(--teal);
-    font-variant-numeric: tabular-nums; line-height:1.1;
-    background: rgba(8,10,9,0.9);
-    border: 1px solid rgba(74,222,128,0.26);
-    border-radius: 8px;
+  .pop-digits .digit-tile{
+    font-size: clamp(26px, 5.5vw, 46px);
     padding: 8px clamp(6px, 1.4vw, 12px);
+    min-width: clamp(24px, 5vw, 42px);
+    border-color: rgba(74,222,128,0.3);
     text-shadow: 0 0 12px rgba(74,222,128,0.5), 0 0 28px rgba(74,222,128,0.2);
     box-shadow: inset 0 0 20px rgba(0,0,0,0.85);
-    min-width: clamp(24px, 5vw, 42px); text-align:center;
   }
-  .pop-comma{
-    font-family: ui-monospace, 'SF Mono', 'Courier New', Consolas, monospace;
-    font-size: clamp(22px, 4.5vw, 38px); color: var(--teal); opacity:0.45;
-    align-self:flex-end; padding-bottom:10px;
-  }
+  .pop-digits .digit-sep{ font-size: clamp(22px, 4.5vw, 38px); padding-bottom:10px; }
   .population .sub{ font-size:12px; color:var(--teal); letter-spacing:0.05em; opacity:0.85; min-height:16px; }
+
+  /* flip-card treatment for the population tiles: a hairline split across the
+     middle (like a real split-flap display) plus a quick rotateX when the
+     digit actually changes. Only the population gets this — see note in JS. */
+  .pop-digits .digit-tile{
+    position:relative; overflow:hidden;
+    perspective: 220px;
+  }
+  .pop-digits .digit-tile::after{
+    content:''; position:absolute; left:0; right:0; top:50%;
+    height:1px; background:rgba(0,0,0,0.75); pointer-events:none;
+  }
+  .pop-digits .digit-tile.flipping{
+    animation: digitFlip 320ms cubic-bezier(0.3, 0, 0.2, 1);
+  }
+  @keyframes digitFlip{
+    0%   { transform: rotateX(0deg);   filter: brightness(1); }
+    45%  { transform: rotateX(-88deg); filter: brightness(0.45); }
+    55%  { transform: rotateX(-92deg); filter: brightness(0.45); }
+    100% { transform: rotateX(0deg);   filter: brightness(1); }
+  }
 
   /* category filter row — desktop: two staggered rows */
   .categories-desktop{ display:flex; flex-direction:column; gap:14px; margin: 44px 0 40px; }
@@ -231,11 +269,28 @@
   .card .row{ display:flex; align-items:flex-end; justify-content:center; gap:12px; margin-top:10px; }
   .card .value{
     font-family: ui-monospace, 'SF Mono', 'Courier New', Consolas, monospace;
-    font-size: clamp(28px, 6vw, 40px); font-weight:600; margin: 0 0 4px;
-    font-variant-numeric: tabular-nums; text-align:left;
+    font-weight:600; font-variant-numeric: tabular-nums;
+    font-size: clamp(28px, 6vw, 40px); line-height:1.1;
+    margin: 0 0 6px; text-align:left;
+    /* soft ambient glow in the card's own category color — the number reads as
+       emitting light, matching the LED clock, without the tile-grid repetition */
+    text-shadow: 0 0 14px currentColor, 0 0 34px rgba(0,0,0,0);
+    transition: text-shadow 260ms ease;
   }
-  .card .value.shrink-1{ font-size: clamp(20px, 5vw, 28px); }
-  .card .value.shrink-2{ font-size: clamp(16px, 4vw, 21px); }
+  .card .value.ticked{
+    animation: valueTick 420ms ease-out;
+  }
+  @keyframes valueTick{
+    0%   { text-shadow: 0 0 22px currentColor, 0 0 44px currentColor; filter: brightness(1.35); }
+    100% { text-shadow: 0 0 14px currentColor; filter: brightness(1); }
+  }
+  .card .value.shrink-1{ font-size: clamp(20px, 4.4vw, 28px); }
+  .card .value.shrink-2{ font-size: clamp(15px, 3.4vw, 21px); }
+
+  .card.hero-main .value{ font-size: clamp(38px, 7vw, 62px); }
+  .card.hero-main .value.shrink-1{ font-size: clamp(28px, 6vw, 44px); }
+  .card.hero-main .value.shrink-2{ font-size: clamp(22px, 5vw, 32px); }
+
   .card .sub{ font-size:12px; color:var(--ink-dim); letter-spacing:0.06em; text-align:left; }
   .card .translate{ font-size:11px; color:var(--teal); letter-spacing:0.02em; text-align:left; margin-top:4px; max-width:180px; }
   .card .spark{ flex-shrink:0; opacity:0.9; margin-bottom: 6px; }
@@ -294,7 +349,8 @@
   .footer{ text-align:center; font-size:11px; letter-spacing:0.2em; color:var(--ink-dim); }
 
   @media (prefers-reduced-motion: reduce){
-    .live .dot, .panel-title .dot, .pulse-marker, .card.flash, #globalFlash.active{ animation:none; }
+    .live .dot, .panel-title .dot, .pulse-marker, .card.flash, #globalFlash.active,
+    .pop-digits .digit-tile.flipping, .card .value.ticked{ animation:none; }
   }
 </style>
 </head>
@@ -355,7 +411,7 @@
     <div class="cat-scroll" id="catScroll"></div>
   </div>
 
-  <div class="breadcrumb" id="breadcrumb">Showing: Overview · / sec</div>
+  <div class="breadcrumb" id="breadcrumb"></div>
 
   <div class="hero-row">
     <div id="heroMain"></div>
@@ -695,7 +751,22 @@ function statColor(stat){
   return shadeHex(base, step.l, step.s);
 }
 
-const SUB_LABEL = { now: "/ sec", day: "today", week: "this week", month: "this month", year: "this year" };
+const SUB_LABEL = { now: "so far", day: "today", week: "this week", month: "this month", year: "this year" };
+
+// The NOW number is a running total since the page opened — labelling it
+// "/ sec" was flatly wrong and read as "200 divorces every second". This
+// shows the honest total label plus the actual rate, so both are unambiguous.
+function formatRate(perSecond){
+  if (perSecond >= 1) return `${formatInt(perSecond) === '0' ? perSecond.toFixed(1) : Math.round(perSecond).toLocaleString('en-US')}/sec`;
+  const secondsEach = 1 / perSecond;
+  if (secondsEach < 90) return `1 every ${Math.round(secondsEach)}s`;
+  if (secondsEach < 5400) return `1 every ${Math.round(secondsEach / 60)}min`;
+  return `1 every ${Math.round(secondsEach / 3600)}h`;
+}
+function subLabelFor(stat){
+  if (currentPeriod !== 'now') return SUB_LABEL[currentPeriod];
+  return `so far · ${formatRate(stat.perSecond)}`;
+}
 let currentPeriod = "now";
 let currentCategory = "overview";
 const loadTime = Date.now();
@@ -811,28 +882,43 @@ function formatInt(n){
 // Numbers here can range from "1" to "$2,482,310,400" — a single fixed
 // font-size either overflows on the big ones or looks tiny on the small
 // ones. This swaps in a smaller size class once the string gets long.
-// Renders the population as one dark tile per digit (commas as plain
-// separators). Rebuilds the tiles only when the number's shape changes —
-// otherwise it just swaps text content, so this stays cheap even though
-// render() runs several times a second.
-let popDigitCache = '';
-function renderPopDigits(text){
-  const container = document.getElementById('popValue');
-  if (text.length !== popDigitCache.length){
+// Renders a number as one tile per digit (commas/$ as plain separators),
+// used by the population counter AND every stat card. Rebuilds tiles only
+// when the string's shape changes — otherwise it just swaps text content on
+// existing nodes. That matters: render() runs ~5x/second across every
+// visible card, so recreating DOM each tick would be genuinely slow.
+function renderDigitTiles(container, text, animate){
+  if (container.dataset.tileCache === text) return;
+  const prev = container.dataset.tileCache || '';
+  if (text.length !== prev.length){
     container.innerHTML = '';
     for (const ch of text){
-      const el = document.createElement('div');
-      el.className = ch === ',' ? 'pop-comma' : 'pop-digit';
+      const el = document.createElement('span');
+      el.className = /\d/.test(ch) ? 'digit-tile' : 'digit-sep';
       el.textContent = ch;
       container.appendChild(el);
     }
   } else {
     const children = container.children;
     for (let i = 0; i < text.length; i++){
-      if (children[i] && children[i].textContent !== text[i]) children[i].textContent = text[i];
+      if (children[i] && children[i].textContent !== text[i]){
+        children[i].textContent = text[i];
+        if (animate && children[i].classList.contains('digit-tile')){
+          children[i].classList.remove('flipping');
+          void children[i].offsetWidth; // restart the animation
+          children[i].classList.add('flipping');
+        }
+      }
     }
   }
-  popDigitCache = text;
+  container.dataset.tileCache = text;
+}
+
+function renderPopDigits(text){
+  // animate=true only here. Card counters can tick thousands of times a
+  // second (coffee cups, stock trades) — flipping those would strobe rather
+  // than read as a flip clock, so they get tiles without the animation.
+  renderDigitTiles(document.getElementById('popValue'), text, true);
 }
 
 function setValueText(el, text){
@@ -920,7 +1006,18 @@ function translateValue(id, value){
    own rate so every stat gets a moment roughly every ~45s, not just the
    fast-moving ones. ---- */
 const milestoneState = {};
-function milestoneStep(perSecond){ return Math.max(1, Math.round(perSecond * 45)); }
+// Milestones land on round human numbers — 100 babies, 1,000 tons, $1B of
+// debt — rather than an arbitrary interval, so a pulse actually means
+// something you could say out loud. Picks the roundest step (1/2/5 × 10ⁿ)
+// that still fires roughly every ~30s at that stat's rate.
+function milestoneStep(perSecond){
+  const target = Math.max(1, perSecond * 30);
+  const mag = Math.pow(10, Math.floor(Math.log10(target)));
+  for (const m of [1, 2, 5, 10]){
+    if (mag * m >= target) return mag * m;
+  }
+  return mag * 10;
+}
 function checkMilestone(id, perSecond, value, onCross){
   const step = milestoneStep(perSecond);
   const bucket = Math.floor(value / step);
@@ -1065,8 +1162,14 @@ document.getElementById('showMoreBtn').addEventListener('click', () => {
 
 function updateBreadcrumb(){
   const cat = CONFIG.categories.find(c => c.id === currentCategory);
-  document.getElementById('breadcrumb').innerHTML =
-    `Showing: <b>${cat.label}</b> · <b>${SUB_LABEL[currentPeriod]}</b>`;
+  const el = document.getElementById('breadcrumb');
+  if (currentPeriod === 'now'){
+    const secs = Math.max(0, Math.floor((Date.now() - loadTime) / 1000));
+    el.innerHTML = `<b>${cat.label}</b> — everything below has happened in the world ` +
+                   `since you opened this page <b>${formatDuration(secs)}</b> ago, and is still counting.`;
+  } else {
+    el.innerHTML = `<b>${cat.label}</b> — totals for the whole world <b>${SUB_LABEL[currentPeriod]}</b>.`;
+  }
 }
 
 /* ---- stat cards ---- */
@@ -1212,11 +1315,26 @@ function render(){
 
   CONFIG.stats.forEach(stat => {
     const c = cards[stat.id];
+    // Hidden cards (filtered out by category/collapse) don't need updating —
+    // this keeps the per-tick cost proportional to what's actually on screen,
+    // which matters now that each value is a row of DOM tiles.
+    if (c.cardEl.style.display === 'none') return;
     const prefix = stat.prefix || '';
     const val = displayValue(stat, now);
-    setValueText(c.valueEl, prefix + formatInt(val));
-    c.subEl.textContent = SUB_LABEL[currentPeriod];
-    if (!stat.flashExempt) checkMilestone(stat.id, stat.perSecond, val, () => flashCard(c.cardEl, statColor(stat)));
+    const text = prefix + formatInt(val);
+    c.valueEl.classList.remove('shrink-1', 'shrink-2');
+    if (text.length > 13) c.valueEl.classList.add('shrink-2');
+    else if (text.length > 9) c.valueEl.classList.add('shrink-1');
+    if (c.valueEl.textContent !== text) c.valueEl.textContent = text;
+    c.subEl.textContent = subLabelFor(stat);
+    // glow pulse only on round milestones (every 100 births, every $1B of
+    // debt, etc.) — pulsing on every tick made 9 cards blink constantly
+    if (!stat.flashExempt) checkMilestone(stat.id, stat.perSecond, val, () => {
+      flashCard(c.cardEl, statColor(stat));
+      c.valueEl.classList.remove('ticked');
+      void c.valueEl.offsetWidth;
+      c.valueEl.classList.add('ticked');
+    });
 
     // only the hero card gets the human-scale translation line — keeping
     // it off every other card is what makes it land instead of feeling repetitive
@@ -1235,7 +1353,8 @@ function render(){
   // alternate every 4s between the rate label and a human-scale translation, when one exists
   const popTranslation = translateValue('population', popVal);
   const showTranslation = popTranslation && Math.floor(now / 4000) % 2 === 1;
-  document.getElementById('popSub').textContent = showTranslation ? popTranslation : SUB_LABEL[currentPeriod];
+  document.getElementById('popSub').textContent = showTranslation ? popTranslation : subLabelFor(pop);
+  updateBreadcrumb(); // keeps the "…since you opened this page X ago" timer live
   checkMilestone('population', pop.perSecond, popVal, flashGlobal);
 
   const d = new Date(now);
@@ -1402,8 +1521,14 @@ const CITY_POINTS = "50.4,13.2,50.5,13.2,50.4,13.2,50.4,13.2,65.3,18,65.5,17.8,6
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
 
-    // fit the map into the hero box, centered, without distorting it
+    // fit the map into the hero box, without distorting it. Horizontally we
+    // center on the viewer's own longitude (derived from their UTC offset)
+    // rather than on 0° — so someone at GMT−3 sees the Americas centered
+    // instead of Europe. Points wrap around the edges so nothing goes blank.
     const scale = Math.min(w / MAP_W, h / MAP_H) * 1.15;
+    const centerLon = -(new Date().getTimezoneOffset() / 60) * 15; // 15° per hour
+    const centerX = ((centerLon + 180) / 360) * MAP_W;             // in map units
+    const shift = (MAP_W / 2) - centerX;
     const offX = (w - MAP_W * scale) / 2;
     const offY = (h - MAP_H * scale) / 2;
 
@@ -1416,7 +1541,9 @@ const CITY_POINTS = "50.4,13.2,50.5,13.2,50.4,13.2,50.4,13.2,65.3,18,65.5,17.8,6
     ctx.globalAlpha = 0.28;
     const size = Math.max(1.2, scale * 0.16);
     for (let i = 0; i < CITY_POINTS.length; i += 2){
-      const x = offX + CITY_POINTS[i] * scale;
+      // wrap into [0, MAP_W) so cities pushed off one edge reappear on the other
+      const lonUnit = ((CITY_POINTS[i] + shift) % MAP_W + MAP_W) % MAP_W;
+      const x = offX + lonUnit * scale;
       const y = offY + CITY_POINTS[i + 1] * scale;
       if (x < -5 || x > w + 5 || y < -5 || y > h + 5) continue;
       ctx.drawImage(sprite, x - size / 2, y - size / 2, size, size);
