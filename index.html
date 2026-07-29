@@ -540,12 +540,31 @@
   .sources-list a:hover{ text-decoration:underline; }
   .sources-list span{ color:var(--ink-dim); }
 
-  .pulse-rule{ margin: 46px 0 14px; opacity:0.7; }
+  /* the heartbeat that gives the site its name — a flat trace with one spike,
+     glowing in the brand green, sweeping left to right on a slow loop */
+  .pulse-wrap{ margin: 46px 0 16px; line-height:0; }
+  /* same trace in the hero, scaled down so it reads as a flourish under LIVE
+     rather than a second divider */
+  .pulse-wrap-hero{ margin: 18px auto 0; max-width: 620px; }
+  .pulse-wrap-hero .pulse-rule{ height: 30px; }
+  .pulse-rule{
+    display:block; width:100%; height:40px;
+    color: var(--teal);
+    filter: drop-shadow(0 0 4px rgba(74,222,128,0.55)) drop-shadow(0 0 14px rgba(74,222,128,0.3));
+  }
+  .pulse-path{
+    stroke-dasharray: 260 1000;
+    animation: pulseSweep 5s linear infinite;
+  }
+  @keyframes pulseSweep{
+    from { stroke-dashoffset: 700; }
+    to   { stroke-dashoffset: -560; }
+  }
   .footer{ text-align:center; font-size:11px; letter-spacing:0.2em; color:var(--ink-dim); }
 
   @media (prefers-reduced-motion: reduce){
     .live .dot, .panel-title .dot, .pulse-marker, .card.flash, #globalFlash.active,
-    .pop-digits .digit-tile.flipping, .card .value.ticked, .shuffle-btn{ animation:none; }
+    .pop-digits .digit-tile.flipping, .card .value.ticked, .shuffle-btn, .pulse-path{ animation:none; }
   }
 </style>
 </head>
@@ -592,6 +611,14 @@
       <div class="tz" id="tz">UTC</div>
       <div class="date-row" id="dateRow">—</div>
       <div class="live"><span class="dot"></span>LIVE</div>
+
+      <div class="pulse-wrap pulse-wrap-hero" aria-hidden="true">
+        <svg class="pulse-rule" viewBox="0 0 400 40" preserveAspectRatio="none">
+          <path class="pulse-path" d="M0 20 H176 L182 17 L188 22 L194 4 L200 36 L206 14 L212 20 L218 19 H400"
+                fill="none" stroke="currentColor" stroke-width="1.6"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
     </div>
   </div>
 
@@ -659,9 +686,13 @@
     </div>
   </div>
 
-  <svg class="pulse-rule" width="100%" height="18" viewBox="0 0 400 18" preserveAspectRatio="none">
-    <path d="M0 9 H160 L172 2 L184 16 L196 9 H400" fill="none" stroke="#1e2523" stroke-width="1.5"/>
-  </svg>
+  <div class="pulse-wrap" aria-hidden="true">
+    <svg class="pulse-rule" viewBox="0 0 400 40" preserveAspectRatio="none">
+      <path class="pulse-path" d="M0 20 H176 L182 17 L188 22 L194 4 L200 36 L206 14 L212 20 L218 19 H400"
+            fill="none" stroke="currentColor" stroke-width="1.6"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
   <div class="footer">EVERY SECOND COUNTS · <button class="about-btn" id="sourcesOpen">SOURCES &amp; ABOUT</button></div>
 
 </div>
