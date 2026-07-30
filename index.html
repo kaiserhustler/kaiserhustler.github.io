@@ -875,9 +875,6 @@ const CONFIG = {
     { id: "lightning_deaths",label:"LIGHTNING STRIKE DEATHS",icon:"bolt", color: "#ffe08a", perSecond: 0.0003,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
     { id: "shark_deaths",   label: "SHARK ATTACK DEATHS",    icon: "wave", color: "#7fd6f2", perSecond: 0.0000019,referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
     { id: "coconut_deaths", label: "DEATHS FROM FALLING COCONUTS",icon:"tree", color: "#c9986b", perSecond: 0.0000032,referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
-    { id: "bee_sting_deaths",label:"BEE STING DEATHS",       icon: "bolt", color: "#ffd166", perSecond: 0.0000015,referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
-    { id: "selfie_deaths",  label: "DEATHS WHILE TAKING SELFIES",icon:"camera", color: "#e0a3ff", perSecond: 0.0000009,referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
-    { id: "vending_deaths", label: "DEATHS FROM VENDING MACHINES",icon:"box", color: "#9fb3a8", perSecond: 0.0000001,referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "mortality", overview: false, flashExempt: true },
 
     // ILLNESS
     { id: "illness",      label: "FLU CASES REPORTED",     icon: "virus", color: "#ff9f6b", perSecond: 15,    referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
@@ -889,7 +886,6 @@ const CONFIG = {
     { id: "tb_cases",     label: "TUBERCULOSIS CASES",     icon: "cloud", color: "#9fb3a8", perSecond: 0.3,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
     { id: "malnutrition", label: "CHILDREN TREATED FOR MALNUTRITION", icon: "plate", color: "#e0c48f", perSecond: 0.6,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false, flashExempt: true, grave: true },
     { id: "asthma",       label: "ASTHMA DIAGNOSES",       icon: "cloud", color: "#a9d6ff", perSecond: 0.9,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
-    { id: "hiccups",      label: "PEOPLE GET HICCUPS",     icon: "virus", color: "#ffb454", perSecond: 50,    referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
     { id: "sneezes",      label: "SNEEZES",                icon: "virus", color: "#a9d6ff", perSecond: 4000,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
     { id: "broken_bones", label: "BONES BROKEN",           icon: "bone", color: "#e0c48f", perSecond: 5,     referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
     { id: "wisdom_teeth", label: "WISDOM TEETH REMOVED",   icon: "bone", color: "#dcdcdc", perSecond: 1.1,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "illness", overview: false },
@@ -962,7 +958,6 @@ const CONFIG = {
     { id: "counterfeit", label: "COUNTERFEIT GOODS SEIZED", icon: "duplicate", color: "#a98bc9", perSecond: 2.4, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
     { id: "missing_persons", label: "PEOPLE REPORTED MISSING", icon: "accountsearch", color: "#7fa8c9", perSecond: 0.25, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false, flashExempt: true, grave: true },
     { id: "trafficking",     label: "HUMAN TRAFFICKING VICTIMS",icon: "handcuffs", color: "#a98bc9", perSecond: 0.16, referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false, flashExempt: true, grave: true },
-    { id: "poaching",        label: "ANIMALS POACHED",        icon: "gun", color: "#a98bc9", perSecond: 1.1,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "crime", overview: false },
 
     // HUMANITY
     { id: "weddings",     label: "WEDDINGS",               icon: "ring", color: "#ffc4dd", perSecond: 2.0,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
@@ -973,7 +968,6 @@ const CONFIG = {
     { id: "tattoos",      label: "TATTOOS GIVEN",          icon: "pill", color: "#e0a3ff", perSecond: 4.6,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
     { id: "proposals",    label: "MARRIAGE PROPOSALS",     icon: "ring", color: "#ffc4dd", perSecond: 2.3,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
     { id: "blood_donations",label:"BLOOD DONATIONS",         icon:"heart", color: "#7fa8c9", perSecond: 3.8,   referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
-    { id: "ufo_sightings",label: "UFO SIGHTINGS REPORTED", icon: "ufo", color: "#a6e3c1", perSecond: 0.02,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
     { id: "selfies",      label: "SELFIES TAKEN",          icon: "camera", color: "#e0a3ff", perSecond: 9500,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
     { id: "haircuts",     label: "HAIRCUTS GIVEN",         icon: "scissors", color: "#ffd166", perSecond: 1800,  referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
     { id: "internet_users",label: "NEW INTERNET USERS",    icon: "globe", color: "#7fa8c9", perSecond: 4,     referenceValue: 0, referenceTime: "2026-07-24T00:00:00Z", category: "humanity", overview: false },
@@ -1921,37 +1915,80 @@ const visitDeltaEls = VISIT_DELTA_IDS.map(id => {
 // the actual CONFIG values above.
 const PERIOD_PHRASE = { day: "today", week: "this week", month: "this month", year: "this year" };
 const DID_YOU_KNOW = [
+  // Live ones — the number comes from that stat's real rate, so these stay in
+  // sync if you change the config. Births deliberately left out: it already
+  // headlines the Overview and the ratio line.
   { id: 'coffee',    now: v => `Every second, humanity drinks about ${formatInt(v)} cups of coffee.`,
                       period: (v, p) => `So far ${p}, humanity has had about ${formatInt(v)} cups of coffee.` },
   { id: 'trees',     now: v => `Every second, about ${formatInt(v)} trees are cut down worldwide.`,
                       period: (v, p) => `So far ${p}, about ${formatInt(v)} trees have been cut down worldwide.` },
-  { id: 'births',    now: v => `Every second, about ${formatInt(v)} babies are born around the world.`,
-                      period: (v, p) => `So far ${p}, about ${formatInt(v)} babies have been born around the world.` },
-  { id: 'co2',       now: v => `Every second, about ${formatInt(v)} tons of CO2 are emitted globally.`,
-                      period: (v, p) => `So far ${p}, about ${formatInt(v)} tons of CO2 have been emitted globally.` },
+  { id: 'co2',       now: v => `Every second, about ${formatInt(v)} tons of CO₂ are emitted globally.`,
+                      period: (v, p) => `So far ${p}, about ${formatInt(v)} tons of CO₂ have been emitted globally.` },
   { id: 'gdp',       now: v => `Every second, the world economy creates roughly $${formatInt(v)}.`,
                       period: (v, p) => `So far ${p}, the world economy has created roughly $${formatInt(v)}.` },
   { id: 'ai_prompts',now: v => `Every second, people send about ${formatInt(v)} prompts to AI models.`,
                       period: (v, p) => `So far ${p}, people have sent about ${formatInt(v)} prompts to AI models.` },
   { id: 'oil',       now: v => `Every second, about ${formatInt(v)} barrels of oil are produced.`,
                       period: (v, p) => `So far ${p}, about ${formatInt(v)} barrels of oil have been produced.` },
-  { id: 'weddings',  now: v => `Every second, roughly ${formatInt(v)} weddings take place somewhere in the world.`,
-                      period: (v, p) => `So far ${p}, roughly ${formatInt(v)} weddings have taken place around the world.` },
   { id: 'stocks',    now: v => `Every second, about ${formatInt(v)} stock trades are executed worldwide.`,
                       period: (v, p) => `So far ${p}, about ${formatInt(v)} stock trades have been executed worldwide.` },
-  // standalone trivia — not tied to any live counter above, just for fun
+
+  // Standalone trivia. Leaning strange, morbid and genuinely surprising —
+  // these aren't tied to any counter, they're here to make you stay.
+  { text: "Your body begins digesting itself about four minutes after you die. Enzymes inside your own cells start breaking them down from the inside." },
+  { text: "Hair and nails don't keep growing after death. The skin dehydrates and pulls back, which just makes them look longer." },
+  { text: "Rigor mortis starts in the face about two hours after death and takes roughly a full day to spread through the entire body." },
+  { text: "A body decomposes about four times faster in water than on land." },
+  { text: "Body fat can turn into a soapy, wax-like substance called adipocere — 'grave wax' — when a corpse decays in water." },
+  { text: "Hearing is thought to be the last sense to fade as a person dies." },
+  { text: "Buried six feet down without a coffin, an adult body typically takes 8 to 12 years to become a skeleton. In a coffin, far longer." },
+  { text: "Sharks are older than trees. They've been around roughly 400 million years — about 50 million years before the first forests." },
+  { text: "More time separates Cleopatra from the building of the Great Pyramid than separates Cleopatra from us." },
+  { text: "Woolly mammoths were still alive when the Great Pyramid of Giza was already standing." },
+  { text: "A day on Venus is longer than a year on Venus. It spins so slowly that one rotation outlasts one orbit." },
+  { text: "It rains diamonds on Neptune and Uranus. Extreme pressure compresses carbon into them mid-atmosphere." },
+  { text: "Only three people have ever reached the deepest part of the ocean. Twelve have walked on the Moon." },
+  { text: "About half the oxygen you breathe comes from the ocean, not from forests — mostly from plankton." },
+  { text: "One type of plankton, Prochlorococcus, may be responsible for one in every five breaths you take." },
   { text: "Honey never spoils. Archaeologists have found 3,000-year-old honey in Egyptian tombs that was still edible." },
-  { text: "A day on Venus is longer than a year on Venus — it rotates that slowly." },
+  { text: "Wombats are the only known animal that produces cube-shaped droppings." },
+  { text: "There are more possible chess games than there are atoms in the observable universe." },
+  { text: "Bananas are berries. Strawberries are not." },
+  { text: "You share roughly 50% of your DNA with a banana." },
+  { text: "The Eiffel Tower can grow about 15cm taller in summer, as the iron expands in the heat." },
+  { text: "A group of flamingos is called a flamboyance." },
+  { text: "The shortest war in recorded history lasted about 38 minutes — Britain versus Zanzibar, 1896." },
+  { text: "A single lightning bolt is roughly five times hotter than the surface of the Sun." },
+  { text: "Sea otters hold hands while they sleep so they don't drift apart." },
   { text: "Octopuses have three hearts and blue, copper-based blood." },
-  { text: "There are more possible chess games than atoms in the observable universe." },
-  { text: "Bananas are technically berries. Strawberries, technically, are not." },
-  { text: "The Eiffel Tower grows about 15cm taller in summer as the iron heats up and expands." },
-  { text: "A group of flamingos is called a 'flamboyance.'" },
-  { text: "Sharks are older than trees — they predate them by roughly 50 million years." },
-  { text: "Wombats are the only known animal whose poop is naturally cube-shaped." },
-  { text: "The shortest recorded war in history lasted about 38 minutes (Britain vs. Zanzibar, 1896)." },
-  { text: "A single bolt of lightning is roughly five times hotter than the surface of the sun." },
-  { text: "Sea otters hold hands while sleeping so they don't drift apart." }
+  { text: "Your stomach acid is strong enough to dissolve a razor blade." },
+  { text: "Babies are born with around 300 bones. Adults have 206 — the rest fuse together as you grow." },
+  { text: "More than a quarter of the bones in your body are in your feet." },
+  { text: "Humans can distinguish roughly 10 million colours. People with a rare condition called tetrachromacy may see hundreds of millions." },
+  { text: "There are more trees on Earth than stars in the Milky Way — by a factor of about ten." },
+  { text: "The Sahara Desert was green grassland with lakes and hippos as recently as 6,000 years ago." },
+  { text: "Antarctica is technically the world's largest desert. Deserts are defined by rainfall, not heat." },
+  { text: "Oxford University is older than the Aztec Empire." },
+  { text: "The fax machine was invented before the American Civil War." },
+  { text: "Nintendo was founded in 1889 — it made playing cards before it made video games." },
+  { text: "Statistically, you are more likely to be killed by a falling coconut than by a shark." },
+  { text: "Vending machines kill more people per year than sharks do — mostly from being tipped over." },
+  { text: "Hippos kill more people each year than lions, leopards and crocodiles do." },
+  { text: "Mosquitoes are the deadliest animal on Earth for humans, by an enormous margin." },
+  { text: "Cows kill more people annually than sharks. Usually by trampling." },
+  { text: "The average cloud weighs around 500 tons — it floats because that mass is spread across an enormous volume." },
+  { text: "There is enough gold dissolved in the world's oceans to give every person on Earth several kilograms of it." },
+  { text: "Point Nemo, the most remote spot in the ocean, is so far from land that the nearest humans are often astronauts on the ISS overhead." },
+  { text: "Space smells, according to astronauts, like seared steak and welding fumes." },
+  { text: "If you removed all the empty space from the atoms in every human on Earth, the entire species would fit in a sugar cube." },
+  { text: "Your left lung is smaller than your right one — it has to make room for your heart." },
+  { text: "You lose about 30,000 dead skin cells every minute. Much of household dust is you." },
+  { text: "The human brain uses about 20% of your body's total energy while being about 2% of its weight." },
+  { text: "Tardigrades can survive the vacuum of space, radiation that would kill you instantly, and decades without water." },
+  { text: "There is a species of jellyfish that can revert to its juvenile form, potentially making it biologically immortal." },
+  { text: "The bacteria living in and on your body outnumber your own cells." },
+  { text: "Roughly 108 billion humans have ever been born. About 7% of them are alive right now." },
+  { text: "Every atom in your body heavier than hydrogen was forged inside a star that exploded before the Sun existed." }
 ];
 let factIndex = 0;
 let lastFactSwitch = Date.now();
@@ -1966,8 +2003,11 @@ function renderFact(now){
   if (fact.id){
     const stat = CONFIG.stats.find(s => s.id === fact.id);
     if (stat){
-      const val = displayValue(stat, now);
-      const text = currentPeriod === 'now' ? fact.now(val) : fact.period(val, PERIOD_PHRASE[currentPeriod]);
+      // "every second, X" must be the RATE. Passing the accumulated total here
+      // made the sentence claim a per-second figure that climbed forever.
+      const text = currentPeriod === 'now'
+        ? fact.now(stat.perSecond)
+        : fact.period(displayValue(stat, now), PERIOD_PHRASE[currentPeriod]);
       document.getElementById('factText').textContent = text;
     }
   } else {
